@@ -1,0 +1,41 @@
+{
+  "name": "strict-qs",
+  "version": "0.0.0",
+  "description": "A stricter Query String parser",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha src/*.mocha.js",
+    "coveralls": "istanbul cover _mocha --report lcovonly -- src/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
+    "cover": "istanbul cover --report html _mocha -- src/*.mocha.js -R spec -t 5000",
+    "cli": "env NPM_RUN_CLI=1",
+    "lint": "eslint src/*.js src/*.mocha.js",
+    "preversion": "npm run lint && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/nfroidure/strict-qs.git"
+  },
+  "keywords": [
+    "qs",
+    "query",
+    "string",
+    "parser"
+  ],
+  "author": "Nicolas froidure",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nfroidure/strict-qs/issues"
+  },
+  "homepage": "https://github.com/nfroidure/strict-qs#readme",
+  "devDependencies": {
+    "coveralls": "~2.11.2",
+    "eslint": "^3.4.0",
+    "eslint-config-simplifield": "^4.1.1",
+    "istanbul": "^0.4.2",
+    "mocha": "^3.0.2",
+    "mocha-lcov-reporter": "^1.0.0"
+  },
+  "dependencies": {
+    "yerror": "^1.0.2"
+  }
+}
