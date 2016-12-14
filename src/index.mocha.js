@@ -31,6 +31,34 @@ describe('strict-qs', () => {
     });
   });
 
+  describe('with ordered collections', () => {
+    const qsDefinition = [{
+      name: 'pages',
+      in: 'query',
+      type: 'array',
+      items: {
+        type: 'number',
+      },
+      ordered: true,
+      description: 'The pages to print',
+    }];
+
+    it('should work when params are ordered', () => {
+      assert.deepEqual(
+        qs(qsDefinition, 'pages=0&pages=1&pages=2'),
+        {
+          pages: [0, 1, 2], // eslint-disable-line
+        }
+      );
+    });
+
+    it('should fail when params are not ordered', () => {
+      assert.throws(() => {
+        qs(qsDefinition, 'pages=0&pages=2&pages=1');
+      }, /E_UNORDERED_QUERY_PARAMS/);
+    });
+  });
+
   describe('with lots of different definitions', () => {
     const qsDefinition = [{
       name: 'lang',

@@ -5,6 +5,32 @@ const BASE_10 = 10;
 
 module.exports = qsStrict;
 
+/**
+ * Parse a queryString according to the provided definitions
+ * @param  {Array}  definitions Swagger compatible list of defitions
+ * @param  {string} queryString The actual query string to parse
+ * @return {Object}             The parsed properties
+ * @example
+ *
+ * import qs from 'strict-qs';
+ *
+ * const qsDefinition = [{
+ *   name: 'pages',
+ *   in: 'query',
+ *   type: 'array',
+ *   items: {
+ *     type: 'number',
+ *   },
+ *   ordered: true,
+ *   description: 'The pages to print',
+ *}];
+ *
+ * qs(qsDefinition, 'pages=0&pages=1&pages=2');
+ * // Returns:
+ * // {
+ * //  pages: [0, 1, 2], // eslint-disable-line
+ * // }
+ */
 function qsStrict(definitions, queryString) {
   const usefulDefinitions = definitions
   .filter(swaggerInQueryDefinitions);
@@ -39,9 +65,11 @@ function pickupQueryParams({
     throw new YError('E_REQUIRED_QUERY_PARAM', queryParamDefinition.name);
   }
 
-  queryStringParams = involvedQueryStringParts.reduce((queryStringParams, queryStringPart) => {
-    return assignQueryStringPart(queryParamDefinition, queryStringParams, queryStringPart);
-  }, queryStringParams);
+  queryStringParams = involvedQueryStringParts.reduce(
+    (queryStringParams, queryStringPart) =>
+      assignQueryStringPart(queryParamDefinition, queryStringParams, queryStringPart),
+    queryStringParams
+  );
 
   return {
     queryStringParams,
@@ -94,6 +122,18 @@ function assignQueryStringPart(queryParamDefinition, queryStringParams, queryStr
 
   if('array' === queryParamDefinition.type) {
     queryStringParams[queryStringPart.name] = queryStringParams[queryStringPart.name] || [];
+    if(
+      queryParamDefinition.ordered && queryStringParams[queryStringPart.name].length &&
+      queryStringParams[queryStringPart.name][
+        queryStringParams[queryStringPart.name].length - 1
+      ] > value
+    ) {
+      throw new YError(
+        'E_UNORDERED_QUERY_PARAMS',
+        value,
+        queryStringParams[queryStringPart.name][queryStringParams[queryStringPart.name].length - 1]
+      );
+    }
     queryStringParams[queryStringPart.name].push(value);
   } else {
     queryStringParams[queryStringPart.name] = value;

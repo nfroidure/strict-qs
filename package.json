@@ -9,6 +9,7 @@
     "cover": "istanbul cover --report html _mocha -- src/*.mocha.js -R spec -t 5000",
     "cli": "env NPM_RUN_CLI=1",
     "lint": "eslint src/*.js src/*.mocha.js",
+    "doc": "jsdoc2md src/index.js > API.md",
     "preversion": "npm run lint && npm test"
   },
   "repository": {
@@ -32,6 +33,7 @@
     "eslint": "^3.4.0",
     "eslint-config-simplifield": "^4.1.1",
     "istanbul": "^0.4.2",
+    "jsdoc-to-markdown": "2.0.1",
     "mocha": "^3.0.2",
     "mocha-lcov-reporter": "^1.0.0"
   },

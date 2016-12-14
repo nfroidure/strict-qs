@@ -10,6 +10,7 @@ To ensure URIs uniqueness, `strict-qs` checks:
 - query parameters values aren't set to their default values
 - values set are reentrant
 - query params used are existing and effective
+- collections items are sorted (by value for number, alpha-numeric for strings)
 
 As a side effect, it also cast values from strings to their target types.
 
@@ -60,3 +61,38 @@ new Error('E_BAD_QUERY_PARAM', 'types')
 
 The returned query params should still be validated with any JSONSchema
  validator.
+
+## API
+
+### qsStrict(definitions, queryString) ⇒ <code>Object</code>
+Parse a queryString according to the provided definitions
+
+**Kind**: global function  
+**Returns**: <code>Object</code> - The parsed properties  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| definitions | <code>Array</code> | Swagger compatible list of defitions |
+| queryString | <code>string</code> | The actual query string to parse |
+
+**Example**  
+```js
+import qs from 'strict-qs';
+
+const qsDefinition = [{
+  name: 'pages',
+  in: 'query',
+  type: 'array',
+  items: {
+    type: 'number',
+  },
+  ordered: true,
+  description: 'The pages to print',
+}];
+
+qs(qsDefinition, 'pages=0&pages=1&pages=2');
+// Returns:
+// {
+//  pages: [0, 1, 2], // eslint-disable-line
+// }
+```
