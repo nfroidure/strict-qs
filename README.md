@@ -1,6 +1,8 @@
 # strict-qs
 > A stricter query string parser
 
+[![NPM version](https://badge.fury.io/js/strict-qs.png)](https://npmjs.org/package/strict-qs) [![Build status](https://secure.travis-ci.org/nfroidure/strict-qs.png)](https://travis-ci.org/nfroidure/strict-qs) [![Dependency Status](https://david-dm.org/nfroidure/strict-qs.png)](https://david-dm.org/nfroidure/strict-qs) [![devDependency Status](https://david-dm.org/nfroidure/strict-qs/dev-status.png)](https://david-dm.org/nfroidure/strict-qs#info=devDependencies) [![Coverage Status](https://coveralls.io/repos/nfroidure/strict-qs/badge.png?branch=master)](https://coveralls.io/r/nfroidure/strict-qs?branch=master) [![Code Climate](https://codeclimate.com/github/nfroidure/strict-qs.png)](https://codeclimate.com/github/nfroidure/strict-qs)
+
 A stricter query string parser allows to ensure URIs uniqueness and better
  caching through your own cache but also public HTTP proxies for public
  endpoints.
