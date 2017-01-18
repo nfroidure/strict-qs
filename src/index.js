@@ -1,5 +1,6 @@
 'use strict';
 
+const debug = require('debug')('strict-qs');
 const YError = require('yerror');
 const BASE_10 = 10;
 
@@ -40,9 +41,14 @@ function qsStrict(definitions, queryString) {
     queryStringParams: {},
     queryStringPartsLeft: '' === queryString ? [] : getQueryStringParts(queryString)
     .map((queryStringPart) => {
+      debug('Looking for "' + queryStringPart.name + '" definitions.');
       if(
         !usefulDefinitions
-        .some(definition => queryStringPart.name === definition.name)
+        .some((definition) => {
+          const found = queryStringPart.name === definition.name;
+          debug('Definition found.', definition);
+          return found;
+        })
       ) {
         throw new YError('E_UNAUTHORIZED_QUERY_PARAM', queryStringPart.name);
       }
@@ -60,6 +66,11 @@ function pickupQueryParams({
     lastIndex: -1,
     keptQueryParts: [],
   }).keptQueryParts;
+
+  debug(
+    'Found ' + involvedQueryStringParts.length + ' values for ' +
+    queryParamDefinition.name + '.', involvedQueryStringParts
+  );
 
   if(0 === involvedQueryStringParts.length && queryParamDefinition.required) {
     throw new YError('E_REQUIRED_QUERY_PARAM', queryParamDefinition.name);
