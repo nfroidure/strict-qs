@@ -3,14 +3,22 @@
   "version": "1.0.1",
   "description": "A stricter Query String parser",
   "main": "src/index.js",
+  "metapak": {
+    "data": {
+      "files": "src/*.js",
+      "testsFiles": "src/*.mocha.js"
+    }
+  },
   "scripts": {
-    "test": "mocha src/*.mocha.js",
+    "cli": "env NODE_ENV=${NODE_ENV:-cli}",
+    "cover": "istanbul cover _mocha --report html -- src/*.mocha.js -R spec -t 5000",
     "coveralls": "istanbul cover _mocha --report lcovonly -- src/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
-    "cover": "istanbul cover --report html _mocha -- src/*.mocha.js -R spec -t 5000",
-    "cli": "env NPM_RUN_CLI=1",
-    "lint": "eslint src/*.js src/*.mocha.js",
     "doc": "jsdoc2md src/index.js > API.md",
-    "preversion": "npm run lint && npm test"
+    "lint": "eslint src/*.js",
+    "metapak": "metapak || echo 'Please `npm install --save-dev metapak`' exit 0",
+    "postinstall": "npm run metapak",
+    "preversion": "npm t && npm run lint",
+    "test": "mocha src/*.mocha.js"
   },
   "repository": {
     "type": "git",
@@ -22,23 +30,28 @@
     "string",
     "parser"
   ],
-  "author": "Nicolas froidure",
+  "author": "Nicolas Froidure",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nfroidure/strict-qs/issues"
   },
   "homepage": "https://github.com/nfroidure/strict-qs#readme",
   "devDependencies": {
-    "coveralls": "~2.11.2",
-    "eslint": "^3.4.0",
-    "eslint-config-simplifield": "^4.1.1",
-    "istanbul": "^0.4.2",
+    "coveralls": "2.11.15",
+    "eslint": "3.4.0",
+    "eslint-config-simplifield": "4.1.1",
+    "istanbul": "0.4.5",
     "jsdoc-to-markdown": "2.0.1",
-    "mocha": "^3.0.2",
-    "mocha-lcov-reporter": "^1.0.0"
+    "metapak": "0.0.13",
+    "metapak-nfroidure": "file:///home/nfroidure/projects/metapak-nfroidure",
+    "mocha": "3.2.0",
+    "mocha-lcov-reporter": "1.2.0"
   },
   "dependencies": {
-    "debug": "^2.6.0",
+    "debug": "1.0.0",
     "yerror": "^1.0.2"
+  },
+  "engines": {
+    "node": ">=4.2.0"
   }
 }
