@@ -43,7 +43,7 @@
     "istanbul": "0.4.5",
     "jsdoc-to-markdown": "2.0.1",
     "metapak": "0.0.13",
-    "metapak-nfroidure": "file:///home/nfroidure/projects/metapak-nfroidure",
+    "metapak-nfroidure": "0.0.9",
     "mocha": "3.2.0",
     "mocha-lcov-reporter": "1.2.0"
   },
@@ -52,6 +52,6 @@
     "yerror": "^1.0.2"
   },
   "engines": {
-    "node": ">=4.2.0"
+    "node": ">=6.9.5"
   }
 }
