@@ -36,7 +36,7 @@ function qsStrict(definitions, queryString) {
   const usefulDefinitions = definitions
   .filter(swaggerInQueryDefinitions);
 
-  return usefulDefinitions
+  const params = usefulDefinitions
   .reduce(pickupQueryParams, {
     queryStringParams: {},
     queryStringPartsLeft: '' === queryString ? [] : getQueryStringParts(queryString)
@@ -56,6 +56,8 @@ function qsStrict(definitions, queryString) {
     }),
   })
   .queryStringParams;
+  debug('Params computed:', params);
+  return params;
 }
 
 function pickupQueryParams({
