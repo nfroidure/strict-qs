@@ -120,11 +120,11 @@ function assignQueryStringPart(queryParamDefinition, queryStringParams, queryStr
     queryParamDefinition.items :
     queryParamDefinition;
   const value = 'string' === itemDefinition.type ?
-    queryStringPart.value :
+    decodeURIComponent(queryStringPart.value) :
     'boolean' === itemDefinition.type ?
-    parseBoolean(queryStringPart.value) :
+    parseBoolean(decodeURIComponent(queryStringPart.value)) :
     'number' === itemDefinition.type ?
-    parseReentrantNumber(queryStringPart.value) :
+    parseReentrantNumber(decodeURIComponent(queryStringPart.value)) :
     (() => {
       throw new YError('E_UNSUPPORTED_TYPE', queryParamDefinition.name, itemDefinition.type);
     })();

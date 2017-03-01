@@ -59,6 +59,23 @@ describe('strict-qs', () => {
     });
   });
 
+  describe('with encoded components', () => {
+    const qsDefinition = [{
+      name: 'redirectURL',
+      in: 'query',
+      type: 'string',
+    }];
+
+    it('should work', () => {
+      assert.deepEqual(
+        qs(qsDefinition, 'redirectURL=' + encodeURIComponent('http://localhost/plop')),
+        {
+          redirectURL: 'http://localhost/plop',
+        }
+      );
+    });
+  });
+
   describe('with lots of different definitions', () => {
     const qsDefinition = [{
       name: 'lang',
