@@ -4,6 +4,10 @@
   "description": "A stricter Query String parser",
   "main": "src/index.js",
   "metapak": {
+    "configs": [
+      "jsdocs",
+      "readme"
+    ],
     "data": {
       "files": "src/*.js",
       "testsFiles": "src/*.mocha.js"
@@ -15,7 +19,7 @@
     "cover": "istanbul cover _mocha --report html -- src/*.mocha.js -R spec -t 5000",
     "coveralls": "istanbul cover _mocha --report lcovonly -- src/*.mocha.js -R spec -t 5000 && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
-    "doc": "jsdoc2md src/index.js > API.md",
+    "doc": "mkdir -p .readme; echo \"# API\" > .readme/API.md; jsdoc2md src/*.js >> .readme/API.md",
     "lint": "eslint src/*.js",
     "metapak": "metapak || echo 'Please `npm install --save-dev metapak`' && exit 0",
     "postinstall": "npm run metapak; npm run metapak --silent",
@@ -47,7 +51,7 @@
     "eslint": "3.16.0",
     "eslint-config-simplifield": "4.1.1",
     "istanbul": "0.4.5",
-    "jsdoc-to-markdown": "2.0.1",
+    "jsdoc-to-markdown": "^3.0.0",
     "metapak": "0.0.18",
     "metapak-nfroidure": "0.4.1",
     "mocha": "3.2.0",
@@ -76,7 +80,8 @@
       "cz-conventional-changelog",
       "coveralls",
       "istanbul",
-      "conventional-changelog-cli"
+      "conventional-changelog-cli",
+      "jsdoc-to-markdown"
     ]
   }
 }
