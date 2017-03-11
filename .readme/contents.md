@@ -7,10 +7,18 @@ To ensure URIs uniqueness, `strict-qs` checks:
 - the order in which query strings are set
 - query parameters values aren't set to their default values
 - values set are reentrant
-- query params used are existing and effective
-- collections items are sorted (by value for number, alpha-numeric for strings)
+- query parameters used are existing and effective
+- items collections are sorted (by value for number, alpha-numeric for strings)
 
 As a side effect, it also cast values from strings to their target types.
+
+You may wonder if it is not overkill to be that strict. Actually, it may
+ be overkill or not depending on how you plan to use your API. For instance,
+ it won't be a problem if you generate client APIs that handle that strictness
+ for you, like i
+ [did here](https://github.com/nfroidure/asttpl/blob/master/src/realworld.mocha.js).
+
+## Usage
 
 ```js
 const qs = require('strict-qs');
@@ -57,40 +65,5 @@ qs(
 new Error('E_BAD_QUERY_PARAM', 'types')
 ```
 
-The returned query params should still be validated with any JSONSchema
- validator.
-
-## API
-
-### qsStrict(definitions, queryString) ⇒ <code>Object</code>
-Parse a queryString according to the provided definitions
-
-**Kind**: global function  
-**Returns**: <code>Object</code> - The parsed properties  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| definitions | <code>Array</code> | Swagger compatible list of defitions |
-| queryString | <code>string</code> | The actual query string to parse |
-
-**Example**  
-```js
-import qs from 'strict-qs';
-
-const qsDefinition = [{
-  name: 'pages',
-  in: 'query',
-  type: 'array',
-  items: {
-    type: 'number',
-  },
-  ordered: true,
-  description: 'The pages to print',
-}];
-
-qs(qsDefinition, 'pages=0&pages=1&pages=2');
-// Returns:
-// {
-//  pages: [0, 1, 2], // eslint-disable-line
-// }
-```
+The returned query parameters should still be validated with
+any JSONSchema validator.
