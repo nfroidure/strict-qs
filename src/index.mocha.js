@@ -98,6 +98,7 @@ describe('strict-qs', () => {
       name: 'code',
       in: 'query',
       type: 'number',
+      pattern: '^[0-9]+$',
       description: 'The code id',
     }, {
       name: 'full',
@@ -130,6 +131,11 @@ describe('strict-qs', () => {
         qsDefinition,
         'lang=cn&types=open&types=closed&types=pending&code=3&full=true'
       ), /E_NOT_IN_ENUM/);
+      assert.throws(qs.bind(
+        null,
+        qsDefinition,
+        'lang=fr&types=open&types=closed&types=pending&code=3.4&full=true'
+      ), /E_PATTERN_DOES_NOT_MATCH/);
     });
 
     it('should work with all params', () => {

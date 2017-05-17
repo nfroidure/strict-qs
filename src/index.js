@@ -137,6 +137,10 @@ function assignQueryStringPart(queryParamDefinition, queryStringParams, queryStr
     throw new YError('E_NOT_IN_ENUM', queryParamDefinition.name, value);
   }
 
+  if(itemDefinition.pattern && !(new RegExp(itemDefinition.pattern)).test(value)) {
+    throw new YError('E_PATTERN_DOES_NOT_MATCH', queryParamDefinition.name, value);
+  }
+
   if('array' === queryParamDefinition.type) {
     queryStringParams[queryStringPart.name] = queryStringParams[queryStringPart.name] || [];
     if(
