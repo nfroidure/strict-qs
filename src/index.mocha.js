@@ -83,6 +83,7 @@ describe('strict-qs', () => {
       type: 'string',
       required: true,
       default: 'en',
+      enum: ['fr', 'en', 'de'],
       description: 'The language for the search',
     }, {
       name: 'types',
@@ -124,6 +125,11 @@ describe('strict-qs', () => {
           full: true,
         }
       );
+      assert.throws(qs.bind(
+        null,
+        qsDefinition,
+        'lang=cn&types=open&types=closed&types=pending&code=3&full=true'
+      ), /E_NOT_IN_ENUM/);
     });
 
     it('should work with all params', () => {

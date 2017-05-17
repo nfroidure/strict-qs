@@ -133,6 +133,10 @@ function assignQueryStringPart(queryParamDefinition, queryStringParams, queryStr
     throw new YError('E_CANNOT_SET_TO_DEFAULT', queryParamDefinition.name, value);
   }
 
+  if(itemDefinition.enum && !itemDefinition.enum.includes(value)) {
+    throw new YError('E_NOT_IN_ENUM', queryParamDefinition.name, value);
+  }
+
   if('array' === queryParamDefinition.type) {
     queryStringParams[queryStringPart.name] = queryStringParams[queryStringPart.name] || [];
     if(
