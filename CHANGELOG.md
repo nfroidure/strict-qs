@@ -1,3 +1,21 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/nfroidure/strict-qs/compare/v1.0.3...v2.0.0) (2017-05-29)
+
+
+### Features
+
+* **API:** Take the complete search in. ([c55ec03](https://github.com/nfroidure/strict-qs/commit/c55ec03))
+* **input:** Check parameters patterns against input ([f4e7173](https://github.com/nfroidure/strict-qs/commit/f4e7173))
+* **input:** Filter input according to `enum` properties of parameter definitions ([0ffae8e](https://github.com/nfroidure/strict-qs/commit/0ffae8e))
+
+
+### BREAKING CHANGES
+
+* API: Any code using this module will break. To fix it, just add the `?` sign to the
+input your provide to the parser.
+
+
+
 <a name="1.0.3"></a>
 ## [1.0.3](https://github.com/nfroidure/strict-qs/compare/v1.0.2...v1.0.3) (2017-03-04)
 
