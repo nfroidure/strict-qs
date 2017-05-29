@@ -4,7 +4,7 @@ const assert = require('assert');
 const qs = require('.');
 
 describe('strict-qs', () => {
-  describe('with no definitions', () => {
+  describe('with no search', () => {
     const qsDefinition = [];
 
     it('should work', () => {
@@ -12,6 +12,22 @@ describe('strict-qs', () => {
         qs(qsDefinition, ''),
         {}
       );
+    });
+  });
+
+  describe('with bad search', () => {
+    const qsDefinition = [];
+
+    it('should fail', () => {
+      assert.throws(() => {
+        qs(qsDefinition, '?');
+      }, 'E_EMPTY_SEARCH');
+    });
+
+    it('should fail', () => {
+      assert.throws(() => {
+        qs(qsDefinition, 'lol');
+      }, 'E_MALFORMED_SEARCH');
     });
   });
 
@@ -26,7 +42,7 @@ describe('strict-qs', () => {
 
     it('should fail', () => {
       assert.throws(() => {
-        qs(qsDefinition, 'user=lol');
+        qs(qsDefinition, '?user=lol');
       }, /E_UNSUPPORTED_TYPE/);
     });
   });
@@ -45,7 +61,7 @@ describe('strict-qs', () => {
 
     it('should work when params are ordered', () => {
       assert.deepEqual(
-        qs(qsDefinition, 'pages=0&pages=1&pages=2'),
+        qs(qsDefinition, '?pages=0&pages=1&pages=2'),
         {
           pages: [0, 1, 2], // eslint-disable-line
         }
@@ -54,7 +70,7 @@ describe('strict-qs', () => {
 
     it('should fail when params are not ordered', () => {
       assert.throws(() => {
-        qs(qsDefinition, 'pages=0&pages=2&pages=1');
+        qs(qsDefinition, '?pages=0&pages=2&pages=1');
       }, /E_UNORDERED_QUERY_PARAMS/);
     });
   });
@@ -68,7 +84,7 @@ describe('strict-qs', () => {
 
     it('should work', () => {
       assert.deepEqual(
-        qs(qsDefinition, 'redirectURL=' + encodeURIComponent('http://localhost/plop')),
+        qs(qsDefinition, '?redirectURL=' + encodeURIComponent('http://localhost/plop')),
         {
           redirectURL: 'http://localhost/plop',
         }
@@ -118,7 +134,7 @@ describe('strict-qs', () => {
 
     it('should work with good params', () => {
       assert.deepEqual(
-        qs(qsDefinition, 'lang=fr&types=open&types=closed&types=pending&code=3&full=true'),
+        qs(qsDefinition, '?lang=fr&types=open&types=closed&types=pending&code=3&full=true'),
         {
           lang: 'fr',
           types: ['open', 'closed', 'pending'],
@@ -129,18 +145,18 @@ describe('strict-qs', () => {
       assert.throws(qs.bind(
         null,
         qsDefinition,
-        'lang=cn&types=open&types=closed&types=pending&code=3&full=true'
+        '?lang=cn&types=open&types=closed&types=pending&code=3&full=true'
       ), /E_NOT_IN_ENUM/);
       assert.throws(qs.bind(
         null,
         qsDefinition,
-        'lang=fr&types=open&types=closed&types=pending&code=3.4&full=true'
+        '?lang=fr&types=open&types=closed&types=pending&code=3.4&full=true'
       ), /E_PATTERN_DOES_NOT_MATCH/);
     });
 
     it('should work with all params', () => {
       assert.deepEqual(
-        qs(qsDefinition, 'lang=fr&types=open&types=closed&types=pending&code=3&full=false&nums=4'),
+        qs(qsDefinition, '?lang=fr&types=open&types=closed&types=pending&code=3&full=false&nums=4'),
         {
           lang: 'fr',
           types: ['open', 'closed', 'pending'],
@@ -153,19 +169,22 @@ describe('strict-qs', () => {
 
     it('should fail when required params are not provided', () => {
       assert.throws(() => {
-        qs(qsDefinition, 'lang=fr&types=open&lang=hop&types=closed&types=pending&code=3&full=true');
+        qs(
+          qsDefinition,
+          '?lang=fr&types=open&lang=hop&types=closed&types=pending&code=3&full=true'
+        );
       }, /E_BAD_QUERY_PARAM_POSITION/);
     });
 
     it('should fail when required params are not provided', () => {
       assert.throws(() => {
-        qs(qsDefinition, 'types=open&types=closed&types=pending&code=3&full=true');
+        qs(qsDefinition, '?types=open&types=closed&types=pending&code=3&full=true');
       }, /E_REQUIRED_QUERY_PARAM/);
     });
 
     it('should fail when a bad boolean is provided', () => {
       assert.throws(() => {
-        qs(qsDefinition, 'lang=fr&types=open&types=closed&types=pending&code=3&full=1');
+        qs(qsDefinition, '?lang=fr&types=open&types=closed&types=pending&code=3&full=1');
       }, /E_BAD_BOOLEAN/);
     });
 
@@ -173,7 +192,7 @@ describe('strict-qs', () => {
       assert.throws(() => {
         qs(
           qsDefinition,
-          'lang=fr&types=open&types=closed&types=pending&code=3&full=true&nums=1&nums=0.0'
+          '?lang=fr&types=open&types=closed&types=pending&code=3&full=true&nums=1&nums=0.0'
         );
       }, /E_NON_REENTRANT_NUMBER/);
     });
@@ -182,7 +201,7 @@ describe('strict-qs', () => {
       assert.throws(() => {
         qs(
           qsDefinition,
-          'lol=9&lang=fr&types=open&types=closed&types=pending&code=3&full=true'
+          '?lol=9&lang=fr&types=open&types=closed&types=pending&code=3&full=true'
         );
       }, /E_UNAUTHORIZED_QUERY_PARAM/);
     });
@@ -191,7 +210,7 @@ describe('strict-qs', () => {
       assert.throws(() => {
         qs(
           qsDefinition,
-          'lang=fr&types=open&types=closed&types=pendinglol=9&&code=3&full=true'
+          '?lang=fr&types=open&types=closed&types=pendinglol=9&&code=3&full=true'
         );
       }, /E_UNAUTHORIZED_QUERY_PARAM/);
     });
@@ -200,7 +219,7 @@ describe('strict-qs', () => {
       assert.throws(() => {
         qs(
           qsDefinition,
-          'lang=fr&types=open&types=closed&types=pending&code=3&full=true&lol=9'
+          '?lang=fr&types=open&types=closed&types=pending&code=3&full=true&lol=9'
         );
       }, /E_UNAUTHORIZED_QUERY_PARAM/);
     });
@@ -209,7 +228,7 @@ describe('strict-qs', () => {
       assert.throws(() => {
         qs(
           qsDefinition,
-          'lang=en&types=open&types=closed&types=pending&code=3&full=true'
+          '?lang=en&types=open&types=closed&types=pending&code=3&full=true'
         );
       }, /E_CANNOT_SET_TO_DEFAULT/);
     });

@@ -2,6 +2,8 @@
 
 const debug = require('debug')('strict-qs');
 const YError = require('yerror');
+
+const SEARCH_FLAG = '?';
 const BASE_10 = 10;
 
 module.exports = qsStrict;
@@ -9,7 +11,7 @@ module.exports = qsStrict;
 /**
  * Parse a queryString according to the provided definitions
  * @param  {Array}  definitions Swagger compatible list of defitions
- * @param  {string} queryString The actual query string to parse
+ * @param  {string} search      The actual query string to parse
  * @return {Object}             The parsed properties
  * @example
  *
@@ -26,26 +28,37 @@ module.exports = qsStrict;
  *   description: 'The pages to print',
  *}];
  *
- * qs(qsDefinition, 'pages=0&pages=1&pages=2');
+ * qs(qsDefinition, '?pages=0&pages=1&pages=2');
  * // Returns:
  * // {
  * //  pages: [0, 1, 2], // eslint-disable-line
  * // }
  */
-function qsStrict(definitions, queryString) {
+function qsStrict(definitions, search) {
+  if(!search) {
+    return {};
+  }
+  if(!search.startsWith(SEARCH_FLAG)) {
+    throw new Error('E_MALFORMED_SEARCH', search);
+  }
+  if(search === SEARCH_FLAG) {
+    throw new Error('E_EMPTY_SEARCH', search);
+  }
+
   const usefulDefinitions = definitions
   .filter(swaggerInQueryDefinitions);
 
   const params = usefulDefinitions
   .reduce(pickupQueryParams, {
     queryStringParams: {},
-    queryStringPartsLeft: '' === queryString ? [] : getQueryStringParts(queryString)
+    queryStringPartsLeft: getQueryStringParts(search.slice(1))
     .map((queryStringPart) => {
       debug('Looking for "' + queryStringPart.name + '" definitions.');
       if(
         !usefulDefinitions
         .some((definition) => {
           const found = queryStringPart.name === definition.name;
+
           debug('Definition found.', definition);
           return found;
         })

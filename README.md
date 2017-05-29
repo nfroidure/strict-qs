@@ -64,7 +64,7 @@ const qsDefinition = [{
 
 qs(
   qsDefinition,
-  'lang=fr&types=open&types=closed&types=pending&code=3'
+  '?lang=fr&types=open&types=closed&types=pending&code=3'
 );
 // Returns
 {
@@ -75,7 +75,7 @@ qs(
 
 qs(
   qsDefinition,
-  'code=3&lang=fr&types=open&types=closed&types=pending'
+  '?code=3&lang=fr&types=open&types=closed&types=pending'
 );
 // throws an error since the order is bad
 new Error('E_BAD_QUERY_PARAM', 'types')
@@ -87,7 +87,7 @@ any JSONSchema validator.
 # API
 <a name="qsStrict"></a>
 
-## qsStrict(definitions, queryString) ⇒ <code>Object</code>
+## qsStrict(definitions, search) ⇒ <code>Object</code>
 Parse a queryString according to the provided definitions
 
 **Kind**: global function  
@@ -96,7 +96,7 @@ Parse a queryString according to the provided definitions
 | Param | Type | Description |
 | --- | --- | --- |
 | definitions | <code>Array</code> | Swagger compatible list of defitions |
-| queryString | <code>string</code> | The actual query string to parse |
+| search | <code>string</code> | The actual query string to parse |
 
 **Example**  
 ```js
@@ -113,7 +113,7 @@ const qsDefinition = [{
   description: 'The pages to print',
 }];
 
-qs(qsDefinition, 'pages=0&pages=1&pages=2');
+qs(qsDefinition, '?pages=0&pages=1&pages=2');
 // Returns:
 // {
 //  pages: [0, 1, 2], // eslint-disable-line
