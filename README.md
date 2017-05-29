@@ -64,7 +64,7 @@ const qsDefinition = [{
 
 qs(
   qsDefinition,
-  '?lang=fr&types=open&types=closed&types=pending&code=3'
+  'lang=fr&types=open&types=closed&types=pending&code=3'
 );
 // Returns
 {
@@ -75,7 +75,7 @@ qs(
 
 qs(
   qsDefinition,
-  '?code=3&lang=fr&types=open&types=closed&types=pending'
+  'code=3&lang=fr&types=open&types=closed&types=pending'
 );
 // throws an error since the order is bad
 new Error('E_BAD_QUERY_PARAM', 'types')
