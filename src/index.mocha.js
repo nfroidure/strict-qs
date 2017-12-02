@@ -8,10 +8,7 @@ describe('strict-qs', () => {
     const qsDefinition = [];
 
     it('should work', () => {
-      assert.deepEqual(
-        qs(qsDefinition, ''),
-        {}
-      );
+      assert.deepEqual(qs(qsDefinition, ''), {});
     });
   });
 
@@ -32,13 +29,15 @@ describe('strict-qs', () => {
   });
 
   describe('with unsupported definition type', () => {
-    const qsDefinition = [{
-      name: 'user',
-      in: 'query',
-      type: 'object',
-      required: true,
-      description: 'The user',
-    }];
+    const qsDefinition = [
+      {
+        name: 'user',
+        in: 'query',
+        type: 'object',
+        required: true,
+        description: 'The user',
+      },
+    ];
 
     it('should fail', () => {
       assert.throws(() => {
@@ -48,24 +47,23 @@ describe('strict-qs', () => {
   });
 
   describe('with ordered collections', () => {
-    const qsDefinition = [{
-      name: 'pages',
-      in: 'query',
-      type: 'array',
-      items: {
-        type: 'number',
+    const qsDefinition = [
+      {
+        name: 'pages',
+        in: 'query',
+        type: 'array',
+        items: {
+          type: 'number',
+        },
+        ordered: true,
+        description: 'The pages to print',
       },
-      ordered: true,
-      description: 'The pages to print',
-    }];
+    ];
 
     it('should work when params are ordered', () => {
-      assert.deepEqual(
-        qs(qsDefinition, '?pages=0&pages=1&pages=2'),
-        {
-          pages: [0, 1, 2], // eslint-disable-line
-        }
-      );
+      assert.deepEqual(qs(qsDefinition, '?pages=0&pages=1&pages=2'), {
+        pages: [0, 1, 2], // eslint-disable-line
+      });
     });
 
     it('should fail when params are not ordered', () => {
@@ -76,15 +74,20 @@ describe('strict-qs', () => {
   });
 
   describe('with encoded components', () => {
-    const qsDefinition = [{
-      name: 'redirectURL',
-      in: 'query',
-      type: 'string',
-    }];
+    const qsDefinition = [
+      {
+        name: 'redirectURL',
+        in: 'query',
+        type: 'string',
+      },
+    ];
 
     it('should work', () => {
       assert.deepEqual(
-        qs(qsDefinition, '?redirectURL=' + encodeURIComponent('http://localhost/plop')),
+        qs(
+          qsDefinition,
+          '?redirectURL=' + encodeURIComponent('http://localhost/plop')
+        ),
         {
           redirectURL: 'http://localhost/plop',
         }
@@ -93,48 +96,57 @@ describe('strict-qs', () => {
   });
 
   describe('with lots of different definitions', () => {
-    const qsDefinition = [{
-      name: 'lang',
-      in: 'query',
-      type: 'string',
-      required: true,
-      default: 'en',
-      enum: ['fr', 'en', 'de'],
-      description: 'The language for the search',
-    }, {
-      name: 'types',
-      in: 'query',
-      type: 'array',
-      items: {
+    const qsDefinition = [
+      {
+        name: 'lang',
+        in: 'query',
         type: 'string',
-        enum: ['open', 'closed', 'pending', 'idle', 'invalid'],
+        required: true,
+        default: 'en',
+        enum: ['fr', 'en', 'de'],
+        description: 'The language for the search',
       },
-      description: 'The types of the search',
-    }, {
-      name: 'code',
-      in: 'query',
-      type: 'number',
-      pattern: '^[0-9]+$',
-      description: 'The code id',
-    }, {
-      name: 'full',
-      in: 'query',
-      type: 'boolean',
-      description: 'Wether it is a full search or not',
-    }, {
-      name: 'nums',
-      in: 'query',
-      type: 'array',
-      items: {
+      {
+        name: 'types',
+        in: 'query',
+        type: 'array',
+        items: {
+          type: 'string',
+          enum: ['open', 'closed', 'pending', 'idle', 'invalid'],
+        },
+        description: 'The types of the search',
+      },
+      {
+        name: 'code',
+        in: 'query',
         type: 'number',
-        enum: [1, 2, 3, 4], // eslint-disable-line
+        pattern: '^[0-9]+$',
+        description: 'The code id',
       },
-      description: 'The types of the search',
-    }];
+      {
+        name: 'full',
+        in: 'query',
+        type: 'boolean',
+        description: 'Wether it is a full search or not',
+      },
+      {
+        name: 'nums',
+        in: 'query',
+        type: 'array',
+        items: {
+          type: 'number',
+          enum: [1, 2, 3, 4], // eslint-disable-line
+        },
+        description: 'The types of the search',
+      },
+    ];
 
     it('should work with good params', () => {
       assert.deepEqual(
-        qs(qsDefinition, '?lang=fr&types=open&types=closed&types=pending&code=3&full=true'),
+        qs(
+          qsDefinition,
+          '?lang=fr&types=open&types=closed&types=pending&code=3&full=true'
+        ),
         {
           lang: 'fr',
           types: ['open', 'closed', 'pending'],
@@ -142,21 +154,30 @@ describe('strict-qs', () => {
           full: true,
         }
       );
-      assert.throws(qs.bind(
-        null,
-        qsDefinition,
-        '?lang=cn&types=open&types=closed&types=pending&code=3&full=true'
-      ), /E_NOT_IN_ENUM/);
-      assert.throws(qs.bind(
-        null,
-        qsDefinition,
-        '?lang=fr&types=open&types=closed&types=pending&code=3.4&full=true'
-      ), /E_PATTERN_DOES_NOT_MATCH/);
+      assert.throws(
+        qs.bind(
+          null,
+          qsDefinition,
+          '?lang=cn&types=open&types=closed&types=pending&code=3&full=true'
+        ),
+        /E_NOT_IN_ENUM/
+      );
+      assert.throws(
+        qs.bind(
+          null,
+          qsDefinition,
+          '?lang=fr&types=open&types=closed&types=pending&code=3.4&full=true'
+        ),
+        /E_PATTERN_DOES_NOT_MATCH/
+      );
     });
 
     it('should work with all params', () => {
       assert.deepEqual(
-        qs(qsDefinition, '?lang=fr&types=open&types=closed&types=pending&code=3&full=false&nums=4'),
+        qs(
+          qsDefinition,
+          '?lang=fr&types=open&types=closed&types=pending&code=3&full=false&nums=4'
+        ),
         {
           lang: 'fr',
           types: ['open', 'closed', 'pending'],
@@ -178,13 +199,19 @@ describe('strict-qs', () => {
 
     it('should fail when required params are not provided', () => {
       assert.throws(() => {
-        qs(qsDefinition, '?types=open&types=closed&types=pending&code=3&full=true');
+        qs(
+          qsDefinition,
+          '?types=open&types=closed&types=pending&code=3&full=true'
+        );
       }, /E_REQUIRED_QUERY_PARAM/);
     });
 
     it('should fail when a bad boolean is provided', () => {
       assert.throws(() => {
-        qs(qsDefinition, '?lang=fr&types=open&types=closed&types=pending&code=3&full=1');
+        qs(
+          qsDefinition,
+          '?lang=fr&types=open&types=closed&types=pending&code=3&full=1'
+        );
       }, /E_BAD_BOOLEAN/);
     });
 
