@@ -1,6 +1,6 @@
 {
   "name": "strict-qs",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A stricter Query String parser",
   "main": "src/index.js",
   "metapak": {
