@@ -1,12 +1,11 @@
-'use strict';
+import initDebug from 'debug';
+import YError from 'yerror';
 
-const debug = require('debug')('strict-qs');
-const YError = require('yerror');
-
+const debug = initDebug('strict-qs');
 const SEARCH_FLAG = '?';
 const BASE_10 = 10;
 
-module.exports = qsStrict;
+export default qsStrict;
 
 /**
  * Parse a queryString according to the provided definitions
@@ -63,7 +62,7 @@ function qsStrict(definitions, search) {
           throw new YError('E_UNAUTHORIZED_QUERY_PARAM', queryStringPart.name);
         }
         return queryStringPart;
-      }
+      },
     ),
   }).queryStringParams;
   debug('Params computed:', params);
@@ -72,14 +71,14 @@ function qsStrict(definitions, search) {
 
 function pickupQueryParams(
   { queryStringParams, queryStringPartsLeft },
-  queryParamDefinition
+  queryParamDefinition,
 ) {
   const involvedQueryStringParts = queryStringPartsLeft.reduce(
     pickQueryPartsByName.bind(null, queryParamDefinition.name),
     {
       lastIndex: -1,
       keptQueryParts: [],
-    }
+    },
   ).keptQueryParts;
 
   debug(
@@ -88,7 +87,7 @@ function pickupQueryParams(
       ' values for ' +
       queryParamDefinition.name +
       '.',
-    involvedQueryStringParts
+    involvedQueryStringParts,
   );
 
   if (0 === involvedQueryStringParts.length && queryParamDefinition.required) {
@@ -100,15 +99,15 @@ function pickupQueryParams(
       assignQueryStringPart(
         queryParamDefinition,
         queryStringParams,
-        queryStringPart
+        queryStringPart,
       ),
-    queryStringParams
+    queryStringParams,
   );
 
   return {
     queryStringParams,
     queryStringPartsLeft: queryStringPartsLeft.slice(
-      involvedQueryStringParts.length
+      involvedQueryStringParts.length,
     ),
   };
 }
@@ -117,7 +116,7 @@ function pickQueryPartsByName(
   name,
   { lastIndex, keptQueryParts },
   queryPart,
-  index
+  index,
 ) {
   if (queryPart.name === name) {
     const isNotFoundAtNextIndex = index !== lastIndex + 1;
@@ -148,7 +147,7 @@ function getQueryStringParts(queryString) {
 function assignQueryStringPart(
   queryParamDefinition,
   queryStringParams,
-  queryStringPart
+  queryStringPart,
 ) {
   // Supporting only a subset of JSON schema core
   // http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
@@ -167,7 +166,7 @@ function assignQueryStringPart(
               throw new YError(
                 'E_UNSUPPORTED_TYPE',
                 queryParamDefinition.name,
-                itemDefinition.type
+                itemDefinition.type,
               );
             })();
 
@@ -175,7 +174,7 @@ function assignQueryStringPart(
     throw new YError(
       'E_CANNOT_SET_TO_DEFAULT',
       queryParamDefinition.name,
-      value
+      value,
     );
   }
 
@@ -190,7 +189,7 @@ function assignQueryStringPart(
     throw new YError(
       'E_PATTERN_DOES_NOT_MATCH',
       queryParamDefinition.name,
-      value
+      value,
     );
   }
 
@@ -209,7 +208,7 @@ function assignQueryStringPart(
         value,
         queryStringParams[queryStringPart.name][
           queryStringParams[queryStringPart.name].length - 1
-        ]
+        ],
       );
     }
     queryStringParams[queryStringPart.name].push(value);
