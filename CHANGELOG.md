@@ -1,3 +1,19 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/nfroidure/strict-qs/compare/v2.0.1...v3.0.0) (2018-03-17)
+
+
+### Code Refactoring
+
+* **Dependencies:** Update `metapak` and `metapak-nfroidure` ([fa0e883](https://github.com/nfroidure/strict-qs/commit/fa0e883))
+
+
+### BREAKING CHANGES
+
+* **Dependencies:** Now using ES6 modules so using it with require will necessit some adaptations
+(using `default` propr for instance.
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/nfroidure/strict-qs/compare/v2.0.0...v2.0.1) (2017-12-02)
 
