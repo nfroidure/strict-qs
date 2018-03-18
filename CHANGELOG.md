@@ -1,3 +1,13 @@
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/nfroidure/strict-qs/compare/v3.0.0...v3.0.1) (2018-03-18)
+
+
+### Bug Fixes
+
+* **Metapak:** Remove old metapak postinstall script ([d7c83c1](https://github.com/nfroidure/strict-qs/commit/d7c83c1))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/nfroidure/strict-qs/compare/v2.0.1...v3.0.0) (2018-03-17)
 
