@@ -29,7 +29,6 @@
     "lint": "eslint src/*.js",
     "metapak": "metapak",
     "mocha": "mocha src/*.mocha.js",
-    "postinstall": "npm run metapak --silent",
     "prettier": "prettier --write src/*.js",
     "preversion": "npm t && npm run lint && npm run metapak -s && npm run compile",
     "test": "jest --config=.jest.config.js",
