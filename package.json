@@ -1,6 +1,6 @@
 {
   "name": "strict-qs",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A stricter Query String parser",
   "main": "dist/index.js",
   "metapak": {
@@ -16,7 +16,9 @@
     "data": {
       "files": "src/*.js",
       "testsFiles": "src/*.mocha.js",
-      "ignore": ["dist"]
+      "ignore": [
+        "dist"
+      ]
     }
   },
   "scripts": {
