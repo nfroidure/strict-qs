@@ -7,13 +7,14 @@
 # strict-qs
 > A stricter Query String parser
 
-[![NPM version](https://badge.fury.io/js/strict-qs.svg)](https://npmjs.org/package/strict-qs)
 [![Build status](https://secure.travis-ci.org/nfroidure/strict-qs.svg)](https://travis-ci.org/nfroidure/strict-qs)
+[![Coverage Status](https://coveralls.io/repos/nfroidure/strict-qs/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/strict-qs?branch=master)
+[![NPM version](https://badge.fury.io/js/strict-qs.svg)](https://npmjs.org/package/strict-qs)
 [![Dependency Status](https://david-dm.org/nfroidure/strict-qs.svg)](https://david-dm.org/nfroidure/strict-qs)
 [![devDependency Status](https://david-dm.org/nfroidure/strict-qs/dev-status.svg)](https://david-dm.org/nfroidure/strict-qs#info=devDependencies)
-[![Coverage Status](https://coveralls.io/repos/nfroidure/strict-qs/badge.svg?branch=master)](https://coveralls.io/r/nfroidure/strict-qs?branch=master)
-[![Code Climate](https://codeclimate.com/github/nfroidure/strict-qs.svg)](https://codeclimate.com/github/nfroidure/strict-qs)
 [![Dependency Status](https://dependencyci.com/github/nfroidure/strict-qs/badge)](https://dependencyci.com/github/nfroidure/strict-qs)
+[![Package Quality](http://npm.packagequality.com/shield/strict-qs.svg)](http://packagequality.com/#?package=strict-qs)
+[![Code Climate](https://codeclimate.com/github/nfroidure/strict-qs.svg)](https://codeclimate.com/github/nfroidure/strict-qs)
 
 
 [//]: # (::contents:start)
@@ -133,6 +134,9 @@ qs(qsDefinition, '?pages=0&pages=1&pages=2');
 //  pages: [0, 1, 2], // eslint-disable-line
 // }
 ```
+
+# Authors
+- [Nicolas Froidure](http://insertafter.com/en/index.html)
 
 # License
 [MIT](https://github.com/nfroidure/strict-qs/blob/master/LICENSE)
