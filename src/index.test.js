@@ -16,13 +16,13 @@ describe('strict-qs', () => {
     test('should fail', () => {
       assert.throws(() => {
         qs(qsDefinition, '?');
-      }, 'E_EMPTY_SEARCH');
+      }, /E_EMPTY_SEARCH/);
     });
 
     test('should fail', () => {
       assert.throws(() => {
         qs(qsDefinition, 'lol');
-      }, 'E_MALFORMED_SEARCH');
+      }, /E_MALFORMED_SEARCH/);
     });
   });
 
