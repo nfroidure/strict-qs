@@ -1,3 +1,17 @@
+# [4.0.0](https://github.com/nfroidure/strict-qs/compare/v3.0.3...v4.0.0) (2018-11-04)
+
+
+### chore
+
+* **Dependencies:** Update dependencies ([53e772a](https://github.com/nfroidure/strict-qs/commit/53e772a))
+
+
+### BREAKING CHANGES
+
+* **Dependencies:** Drops support for NodeJS < 8
+
+
+
 ## [3.0.3](https://github.com/nfroidure/strict-qs/compare/v3.0.2...v3.0.3) (2018-11-03)
 
 
