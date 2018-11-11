@@ -37,9 +37,9 @@
     "lint": "eslint 'src/**/*.js'",
     "metapak": "metapak",
     "mocha": "mocha src/*.mocha.js",
-    "precz": "npm t && npm run lint && npm run metapak -- -s && npm run doc",
+    "precz": "npm t && npm run lint && npm run doc && npm run metapak -- -s",
     "prettier": "prettier --write 'src/**/*.js'",
-    "preversion": "npm t && npm run lint && npm run metapak -s && npm run compile && npm run metapak -- -s && npm run doc",
+    "preversion": "npm t && npm run lint && npm run compile && npm run doc && npm run metapak -- -s",
     "test": "npm run jest",
     "version": "npm run changelog && git add CHANGELOG.md"
   },
@@ -80,11 +80,11 @@
     "jest": "^23.6.0",
     "jsdoc-to-markdown": "^4.0.1",
     "metapak": "^2.0.0",
-    "metapak-nfroidure": "9.0.1",
+    "metapak-nfroidure": "9.0.2",
     "prettier": "^1.14.3"
   },
   "dependencies": {
-    "debug": "^4.0.1",
+    "debug": "^4.1.0",
     "sinon": "^7.1.1",
     "yerror": "^2.1.3"
   },
@@ -160,7 +160,7 @@
         "@babel/env",
         {
           "targets": {
-            "node": "6.9.5"
+            "node": "8.12.0"
           }
         }
       ]
