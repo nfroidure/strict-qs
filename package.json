@@ -3,6 +3,7 @@
   "version": "4.0.2",
   "description": "A stricter Query String parser",
   "main": "dist/index.js",
+  "types": "src/index.d.js",
   "metapak": {
     "configs": [
       "main",
@@ -21,6 +22,7 @@
         "dist"
       ],
       "bundleFiles": [
+        "src/index.d.js",
         "dist/**/*.js"
       ]
     }
@@ -117,6 +119,7 @@
   },
   "contributors": [],
   "files": [
+    "src/index.d.js",
     "dist/**/*.js",
     "LICENSE",
     "README.md",
