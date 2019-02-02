@@ -1,3 +1,7 @@
+## [4.0.2](https://github.com/nfroidure/strict-qs/compare/v4.0.1...v4.0.2) (2019-02-02)
+
+
+
 ## [4.0.1](https://github.com/nfroidure/strict-qs/compare/v4.0.0...v4.0.1) (2018-11-11)
 
 
