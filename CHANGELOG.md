@@ -1,3 +1,12 @@
+# [4.1.0](https://github.com/nfroidure/strict-qs/compare/v4.0.2...v4.1.0) (2019-02-02)
+
+
+### Features
+
+* **Types:** Add TypeScript types definitions ([e17f7cf](https://github.com/nfroidure/strict-qs/commit/e17f7cf))
+
+
+
 ## [4.0.2](https://github.com/nfroidure/strict-qs/compare/v4.0.1...v4.0.2) (2019-02-02)
 
 
