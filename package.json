@@ -17,7 +17,7 @@
     ],
     "data": {
       "files": "'src/**/*.js'",
-      "testsFiles": "'src/**/*.mocha.js'",
+      "testsFiles": "'src/**/*.test.js'",
       "ignore": [
         "dist"
       ],
@@ -38,7 +38,6 @@
     "jest": "NODE_ENV=test jest",
     "lint": "eslint 'src/**/*.js'",
     "metapak": "metapak",
-    "mocha": "mocha src/*.mocha.js",
     "precz": "npm t && npm run lint && npm run doc && npm run metapak -- -s",
     "prettier": "prettier --write 'src/**/*.js'",
     "preversion": "npm t && npm run lint && npm run compile && npm run doc && npm run metapak -- -s",
@@ -66,28 +65,27 @@
   },
   "homepage": "https://github.com/nfroidure/strict-qs#readme",
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-object-rest-spread": "^7.3.1",
-    "@babel/preset-env": "^7.3.1",
-    "@babel/register": "^7.0.0",
-    "babel-eslint": "^10.0.1",
-    "commitizen": "^3.0.5",
-    "conventional-changelog-cli": "^2.0.11",
-    "coveralls": "^3.0.2",
-    "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^5.13.0",
-    "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.0.0",
-    "jsdoc-to-markdown": "^4.0.1",
-    "metapak": "^3.1.2",
-    "metapak-nfroidure": "9.5.0",
-    "prettier": "^1.16.3"
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/register": "^7.7.4",
+    "babel-eslint": "^10.0.3",
+    "commitizen": "^4.0.3",
+    "conventional-changelog-cli": "^2.0.28",
+    "coveralls": "^3.0.9",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.7.1",
+    "eslint-plugin-prettier": "^3.1.1",
+    "jest": "^24.9.0",
+    "jsdoc-to-markdown": "^5.0.3",
+    "metapak": "^3.1.6",
+    "metapak-nfroidure": "9.7.4",
+    "prettier": "^1.19.1"
   },
   "dependencies": {
     "debug": "^4.1.1",
-    "sinon": "^7.2.3",
-    "yerror": "^4.0.1"
+    "yerror": "^5.0.0"
   },
   "engines": {
     "node": ">=8.12.0"

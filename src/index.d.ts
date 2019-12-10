@@ -1,5 +1,5 @@
-type QSValue = any;
-type QSParamValue = string | number | boolean;
+type QSValue = string | number | boolean;
+type QSParamValue = QSValue;
 type QSParamType = 'string' | 'number' | 'boolean';
 
 type QSUniqueParameter = {

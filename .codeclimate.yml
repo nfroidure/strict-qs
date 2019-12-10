@@ -12,4 +12,4 @@ ratings:
 exclude_patterns:
 - "dist/"
 - "**/node_modules/"
-- "src/**/*.mocha.js"
+- "src/**/*.test.js"
