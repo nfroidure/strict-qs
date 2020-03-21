@@ -1,3 +1,12 @@
+# [5.0.0](https://github.com/nfroidure/strict-qs/compare/v4.2.0...v5.0.0) (2020-03-21)
+
+
+### Bug Fixes
+
+* **decoding:** support decoding + in params ([e31a1a8](https://github.com/nfroidure/strict-qs/commit/e31a1a8643c10518191159b7dc5d9756551d6e25))
+
+
+
 # [4.2.0](https://github.com/nfroidure/strict-qs/compare/v4.1.1...v4.2.0) (2020-01-19)
 
 
