@@ -93,6 +93,22 @@ describe('strict-qs', () => {
     });
   });
 
+  describe('with axios components', () => {
+    const qsDefinition = [
+      {
+        name: 'query',
+        in: 'query',
+        type: 'string',
+      },
+    ];
+
+    test('should work', () => {
+      assert.deepEqual(qs(qsDefinition, '?query=a+b+c'), {
+        query: 'a b c',
+      });
+    });
+  });
+
   describe('with lots of different definitions', () => {
     const qsDefinition = [
       {

@@ -157,11 +157,11 @@ function assignQueryStringPart(
       : queryParamDefinition;
   const value =
     'string' === itemDefinition.type
-      ? decodeURIComponent(queryStringPart.value)
+      ? decodeQueryComponent(queryStringPart.value)
       : 'boolean' === itemDefinition.type
-      ? parseBoolean(decodeURIComponent(queryStringPart.value))
+      ? parseBoolean(decodeQueryComponent(queryStringPart.value))
       : 'number' === itemDefinition.type
-      ? parseReentrantNumber(decodeURIComponent(queryStringPart.value))
+      ? parseReentrantNumber(decodeQueryComponent(queryStringPart.value))
       : (() => {
           throw new YError(
             'E_UNSUPPORTED_TYPE',
@@ -235,4 +235,8 @@ function parseBoolean(str) {
     return false;
   }
   throw new YError('E_BAD_BOOLEAN', str);
+}
+
+function decodeQueryComponent(value) {
+  return decodeURIComponent(value.replace(/\+/g, '%20'));
 }
