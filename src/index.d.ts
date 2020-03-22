@@ -37,3 +37,9 @@ declare function qsStrict(
 };
 
 export default qsStrict;
+
+export function parseReentrantNumber(str: string): number;
+
+export function parseBoolean(str: string): boolean;
+
+export function decodeQueryComponent(value: string): string;
