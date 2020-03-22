@@ -1,3 +1,13 @@
+# [6.0.0](https://github.com/nfroidure/strict-qs/compare/v5.0.0...v6.0.0) (2020-03-22)
+
+
+### Features
+
+* **lib:** export some library components ([5754ace](https://github.com/nfroidure/strict-qs/commit/5754aceb9495d7cda77b255677e2f9893ab11e7a))
+* **options:** add options to release stricness ([4c6a80a](https://github.com/nfroidure/strict-qs/commit/4c6a80aabe203dca35d74cd0b8b23c6db0a17b0f))
+
+
+
 # [5.0.0](https://github.com/nfroidure/strict-qs/compare/v4.2.0...v5.0.0) (2020-03-21)
 
 
