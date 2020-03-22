@@ -10,13 +10,28 @@ export default qsStrict;
 
 /**
  * Parse a queryString according to the provided definitions
- * @param  {Array}  definitions Swagger compatible list of defitions
- * @param  {string} search      The actual query string to parse
- * @return {Object}             The parsed properties
+ * @param  {Object}  options
+ * Parser options
+ * @param  {Boolean}  options.allowEmptySearch
+ * Avoid throwing when the search is empty
+ * @param  {Boolean}  options.allowUnknownParams
+ * Avoid throwing when some params are unknown
+ * @param  {Boolean}  options.allowDefault
+ * Avoid throwing when some params is set to its default value
+ * @param  {Boolean}  options.allowUnorderedParams
+ * Avoid throwing when params are not set in the same order
+ *  than declarations
+ * @param  {Array}   definitions
+ * Swagger compatible list of defitions
+ * @param  {string}  search
+ * The actual query string to parse
+ * @return {Object}
+ * The parsed properties
  * @example
  *
  * import qs from 'strict-qs';
  *
+ * const qsOptions = { allowEmptySearch: true };
  * const qsDefinition = [{
  *   name: 'pages',
  *   in: 'query',
@@ -28,13 +43,13 @@ export default qsStrict;
  *   description: 'The pages to print',
  *}];
  *
- * qs(qsDefinition, '?pages=0&pages=1&pages=2');
+ * qs(qsOptions, qsDefinition, '?pages=0&pages=1&pages=2');
  * // Returns:
  * // {
  * //  pages: [0, 1, 2], // eslint-disable-line
  * // }
  */
-function qsStrict(definitions, search) {
+function qsStrict(options, definitions, search) {
   if (!search) {
     return {};
   }
@@ -42,35 +57,70 @@ function qsStrict(definitions, search) {
     throw new Error('E_MALFORMED_SEARCH', search);
   }
   if (search === SEARCH_FLAG) {
+    if (options.allowEmptySearch) {
+      return {};
+    }
     throw new Error('E_EMPTY_SEARCH', search);
   }
 
   const usefulDefinitions = definitions.filter(swaggerInQueryDefinitions);
+  let queryStringParts = getQueryStringParts(search.slice(1));
 
-  const params = usefulDefinitions.reduce(pickupQueryParams, {
-    queryStringParams: {},
-    queryStringPartsLeft: getQueryStringParts(search.slice(1)).map(
-      queryStringPart => {
-        debug('Looking for "' + queryStringPart.name + '" definitions.');
-        if (
-          !usefulDefinitions.some(definition => {
-            const found = queryStringPart.name === definition.name;
+  if (options.allowUnorderedParams) {
+    queryStringParts = definitions
+      .reduce(
+        (sortedParts, definition) => [
+          ...sortedParts,
+          ...queryStringParts.filter(
+            queryStringPart => queryStringPart.name === definition.name,
+          ),
+        ],
+        [],
+      )
+      .concat(
+        queryStringParts.filter(
+          queryStringPart =>
+            !definitions.some(
+              definition => queryStringPart.name === definition.name,
+            ),
+        ),
+      );
+  }
 
-            debug('Definition found.', definition);
-            return found;
-          })
-        ) {
-          throw new YError('E_UNAUTHORIZED_QUERY_PARAM', queryStringPart.name);
-        }
-        return queryStringPart;
-      },
-    ),
-  }).queryStringParams;
+  const params = usefulDefinitions.reduce(
+    pickupQueryParams.bind(null, options),
+    {
+      queryStringParams: {},
+      queryStringPartsLeft: queryStringParts
+        .map(queryStringPart => {
+          debug('Looking for "' + queryStringPart.name + '" definitions.');
+          if (
+            !usefulDefinitions.some(definition => {
+              const found = queryStringPart.name === definition.name;
+
+              debug('Definition found.', definition);
+              return found;
+            })
+          ) {
+            if (options.allowUnknownParams) {
+              return null;
+            }
+            throw new YError(
+              'E_UNAUTHORIZED_QUERY_PARAM',
+              queryStringPart.name,
+            );
+          }
+          return queryStringPart;
+        })
+        .filter(identity => identity),
+    },
+  ).queryStringParams;
   debug('Params computed:', params);
   return params;
 }
 
 function pickupQueryParams(
+  options,
   { queryStringParams, queryStringPartsLeft },
   queryParamDefinition,
 ) {
@@ -98,6 +148,7 @@ function pickupQueryParams(
   queryStringParams = involvedQueryStringParts.reduce(
     (queryStringParams, queryStringPart) =>
       assignQueryStringPart(
+        options,
         queryParamDefinition,
         queryStringParams,
         queryStringPart,
@@ -146,6 +197,7 @@ function getQueryStringParts(queryString) {
 }
 
 function assignQueryStringPart(
+  options,
   queryParamDefinition,
   queryStringParams,
   queryStringPart,
@@ -171,7 +223,7 @@ function assignQueryStringPart(
           );
         })();
 
-  if (itemDefinition.default === value) {
+  if (itemDefinition.default === value && !options.allowDefault) {
     throw new YError(
       'E_CANNOT_SET_TO_DEFAULT',
       queryParamDefinition.name,
