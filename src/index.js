@@ -1,9 +1,10 @@
 import initDebug from 'debug';
 import YError from 'yerror';
 
+export const SEARCH_FLAG = '?';
+export const BASE_10 = 10;
+
 const debug = initDebug('strict-qs');
-const SEARCH_FLAG = '?';
-const BASE_10 = 10;
 
 export default qsStrict;
 
@@ -218,7 +219,7 @@ function assignQueryStringPart(
   return queryStringParams;
 }
 
-function parseReentrantNumber(str) {
+export function parseReentrantNumber(str) {
   const value = parseFloat(str, BASE_10);
 
   if (value.toString(BASE_10) !== str) {
@@ -228,7 +229,7 @@ function parseReentrantNumber(str) {
   return value;
 }
 
-function parseBoolean(str) {
+export function parseBoolean(str) {
   if ('true' === str) {
     return true;
   } else if ('false' === str) {
@@ -237,6 +238,6 @@ function parseBoolean(str) {
   throw new YError('E_BAD_BOOLEAN', str);
 }
 
-function decodeQueryComponent(value) {
+export function decodeQueryComponent(value) {
   return decodeURIComponent(value.replace(/\+/g, '%20'));
 }
