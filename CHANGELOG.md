@@ -1,3 +1,12 @@
+## [6.0.1](https://github.com/nfroidure/strict-qs/compare/v6.0.0...v6.0.1) (2020-03-22)
+
+
+### Bug Fixes
+
+* **types:** add newly exported functions types ([ee3f17c](https://github.com/nfroidure/strict-qs/commit/ee3f17c680b66cd3ca210f898ecee9cce17b26da))
+
+
+
 # [6.0.0](https://github.com/nfroidure/strict-qs/compare/v5.0.0...v6.0.0) (2020-03-22)
 
 
