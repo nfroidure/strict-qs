@@ -10,18 +10,20 @@ type QSParamType = 'string' | 'number' | 'boolean';
 
 type QSUniqueParameter = {
   name: string;
+  in: 'query';
   pattern?: string;
-  enum: QSParamValue[];
+  enum?: QSParamValue[];
   type: QSParamType;
 };
 
 type QSArrayParameter = {
   name: string;
+  in: 'query';
   type: 'array';
   ordered: boolean;
   items: {
     pattern?: string;
-    enum: QSParamValue[];
+    enum?: QSParamValue[];
     type: QSParamType;
   };
 };
