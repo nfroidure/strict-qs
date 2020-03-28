@@ -1,3 +1,12 @@
+## [6.0.2](https://github.com/nfroidure/strict-qs/compare/v6.0.1...v6.0.2) (2020-03-28)
+
+
+### Bug Fixes
+
+* **types:** add the in property and make enum optional ([33541b9](https://github.com/nfroidure/strict-qs/commit/33541b9ff423a58382b8dcecbe040e18fc427668))
+
+
+
 ## [6.0.1](https://github.com/nfroidure/strict-qs/compare/v6.0.0...v6.0.1) (2020-03-22)
 
 
