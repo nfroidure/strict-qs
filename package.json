@@ -3,6 +3,7 @@
   "version": "6.1.0",
   "description": "A stricter Query String parser",
   "main": "dist/index",
+  "module": "dist/index.mjs",
   "types": "src/index.d.js",
   "metapak": {
     "configs": [
@@ -164,6 +165,9 @@
     ]
   },
   "babel": {
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread"
+    ],
     "presets": [
       [
         "@babel/env",
@@ -174,9 +178,36 @@
         }
       ]
     ],
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
-  },
-  "module": "dist/index.mjs"
+    "env": {
+      "cjs": {
+        "presets": [
+          [
+            "@babel/env",
+            {
+              "targets": {
+                "node": "10"
+              },
+              "modules": "commonjs"
+            }
+          ]
+        ],
+        "comments": true
+      },
+      "mjs": {
+        "presets": [
+          [
+            "@babel/env",
+            {
+              "targets": {
+                "node": "12"
+              },
+              "modules": "false"
+            }
+          ]
+        ],
+        "comments": false
+      }
+    },
+    "sourceMaps": true
+  }
 }
