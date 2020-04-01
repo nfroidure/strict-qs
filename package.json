@@ -2,7 +2,7 @@
   "name": "strict-qs",
   "version": "6.0.2",
   "description": "A stricter Query String parser",
-  "main": "dist/index.js",
+  "main": "dist/index",
   "types": "src/index.d.js",
   "metapak": {
     "configs": [
@@ -30,7 +30,9 @@
   "scripts": {
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
     "cli": "env NODE_ENV=${NODE_ENV:-cli}",
-    "compile": "babel src --out-dir=dist --source-maps=true",
+    "compile": "rimraf -f 'dist' && npm run compile:cjs && npm run compile:mjs",
+    "compile:cjs": "babel --env-name=cjs --out-dir=dist --source-maps=true src",
+    "compile:mjs": "babel --env-name=mjs --out-file-extension=.mjs --out-dir=dist --source-maps=true src",
     "cover": "npm run jest -- --coverage",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
@@ -38,7 +40,7 @@
     "jest": "NODE_ENV=test jest",
     "lint": "eslint 'src/**/*.js'",
     "metapak": "metapak",
-    "precz": "npm t && npm run lint && npm run doc && npm run metapak -- -s && npm run compile",
+    "precz": "npm t && npm run lint && npm run compile && npm run doc && npm run metapak -- -s",
     "prettier": "prettier --write 'src/**/*.js'",
     "preversion": "npm t && npm run lint && npm run compile && npm run doc && npm run metapak -- -s",
     "test": "npm run jest",
@@ -66,10 +68,10 @@
   "homepage": "https://github.com/nfroidure/strict-qs#readme",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.7",
-    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
-    "@babel/preset-env": "^7.8.7",
-    "@babel/register": "^7.8.6",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
     "babel-eslint": "^10.1.0",
     "commitizen": "^4.0.3",
     "conventional-changelog-cli": "^2.0.31",
@@ -77,11 +79,11 @@
     "cz-conventional-changelog": "^3.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-prettier": "^3.1.2",
-    "jest": "^25.1.0",
+    "jest": "^25.2.4",
     "jsdoc-to-markdown": "^5.0.3",
     "metapak": "^3.1.8",
-    "metapak-nfroidure": "10.0.1",
-    "prettier": "^1.19.1"
+    "metapak-nfroidure": "10.1.2",
+    "prettier": "^2.0.2"
   },
   "dependencies": {
     "debug": "^4.1.1",
@@ -175,5 +177,6 @@
     "plugins": [
       "@babel/plugin-proposal-object-rest-spread"
     ]
-  }
+  },
+  "module": "dist/index.mjs"
 }

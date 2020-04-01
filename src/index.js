@@ -72,16 +72,16 @@ function qsStrict(options, definitions, search) {
         (sortedParts, definition) => [
           ...sortedParts,
           ...queryStringParts.filter(
-            queryStringPart => queryStringPart.name === definition.name,
+            (queryStringPart) => queryStringPart.name === definition.name,
           ),
         ],
         [],
       )
       .concat(
         queryStringParts.filter(
-          queryStringPart =>
+          (queryStringPart) =>
             !definitions.some(
-              definition => queryStringPart.name === definition.name,
+              (definition) => queryStringPart.name === definition.name,
             ),
         ),
       );
@@ -92,10 +92,10 @@ function qsStrict(options, definitions, search) {
     {
       queryStringParams: {},
       queryStringPartsLeft: queryStringParts
-        .map(queryStringPart => {
+        .map((queryStringPart) => {
           debug('Looking for "' + queryStringPart.name + '" definitions.');
           if (
-            !usefulDefinitions.some(definition => {
+            !usefulDefinitions.some((definition) => {
               const found = queryStringPart.name === definition.name;
 
               debug('Definition found.', definition);
@@ -112,7 +112,7 @@ function qsStrict(options, definitions, search) {
           }
           return queryStringPart;
         })
-        .filter(identity => identity),
+        .filter((identity) => identity),
     },
   ).queryStringParams;
   debug('Params computed:', params);
@@ -189,7 +189,7 @@ function swaggerInQueryDefinitions(definition) {
 function getQueryStringParts(queryString) {
   return queryString
     .split('&')
-    .map(queryStringChunk => queryStringChunk.split('='))
+    .map((queryStringChunk) => queryStringChunk.split('='))
     .map(([queryPartName, queryPartValue]) => ({
       name: queryPartName,
       value: queryPartValue,
