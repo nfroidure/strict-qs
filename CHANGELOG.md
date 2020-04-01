@@ -1,3 +1,12 @@
+## [6.1.1](https://github.com/nfroidure/strict-qs/compare/v6.1.0...v6.1.1) (2020-04-01)
+
+
+### Bug Fixes
+
+* **esm:** fix babel build that were not applied ([6f810ca](https://github.com/nfroidure/strict-qs/commit/6f810caba3e3ac7e9488e77c6da822442b5dacd5))
+
+
+
 # [6.1.0](https://github.com/nfroidure/strict-qs/compare/v6.0.2...v6.1.0) (2020-04-01)
 
 
