@@ -1,12 +1,57 @@
 import initDebug from 'debug';
-import YError from 'yerror';
+import { YError } from 'yerror';
 
 export const SEARCH_FLAG = '?';
 export const BASE_10 = 10;
 
 const debug = initDebug('strict-qs');
 
-export default qsStrict;
+type QueryPart = {
+  name: string;
+  value: string;
+};
+
+export type QSOptions = {
+  allowEmptySearch?: boolean;
+  allowUnknownParams?: boolean;
+  allowDefault?: boolean;
+  allowUnorderedParams?: boolean;
+};
+export type QSValue = string | number | boolean;
+export type QSParamValue = QSValue;
+export type QSParamType = 'string' | 'number' | 'boolean';
+
+export type QSUniqueParameter = {
+  name: string;
+  description?: string;
+  in: 'query';
+  pattern?: string;
+  required?: boolean;
+  enum?: QSParamValue[];
+  type: QSParamType;
+  default?: QSParamValue;
+};
+
+export type QSArrayParameter = {
+  name: string;
+  description?: string;
+  in: 'query';
+  type: 'array';
+  required?: boolean;
+  ordered?: boolean;
+  default?: QSParamValue[];
+  items: {
+    pattern?: string;
+    enum?: QSParamValue[];
+    type: QSParamType;
+  };
+};
+
+export type QSParameter = QSUniqueParameter | QSArrayParameter;
+
+export type QSParameterValues = {
+  [name: string]: QSValue | QSValue[];
+};
 
 /**
  * Parse a queryString according to the provided definitions
@@ -49,18 +94,23 @@ export default qsStrict;
  * //  pages: [0, 1, 2], // eslint-disable-line
  * // }
  */
-function qsStrict(options, definitions, search) {
+
+function qsStrict(
+  options: QSOptions,
+  definitions: QSParameter[],
+  search: string,
+): QSParameterValues {
   if (!search) {
     return {};
   }
   if (!search.startsWith(SEARCH_FLAG)) {
-    throw new Error('E_MALFORMED_SEARCH', search);
+    throw new YError('E_MALFORMED_SEARCH', search);
   }
   if (search === SEARCH_FLAG) {
     if (options.allowEmptySearch) {
       return {};
     }
-    throw new Error('E_EMPTY_SEARCH', search);
+    throw new YError('E_EMPTY_SEARCH', search);
   }
 
   const usefulDefinitions = definitions.filter(swaggerInQueryDefinitions);
@@ -75,7 +125,7 @@ function qsStrict(options, definitions, search) {
             (queryStringPart) => queryStringPart.name === definition.name,
           ),
         ],
-        [],
+        [] as QueryPart[],
       )
       .concat(
         queryStringParts.filter(
@@ -120,7 +170,7 @@ function qsStrict(options, definitions, search) {
 }
 
 function pickupQueryParams(
-  options,
+  options: QSOptions,
   { queryStringParams, queryStringPartsLeft },
   queryParamDefinition,
 ) {
@@ -165,11 +215,14 @@ function pickupQueryParams(
 }
 
 function pickQueryPartsByName(
-  name,
-  { lastIndex, keptQueryParts },
-  queryPart,
-  index,
-) {
+  name: string,
+  {
+    lastIndex,
+    keptQueryParts,
+  }: { lastIndex: number; keptQueryParts: QueryPart[] },
+  queryPart: QueryPart,
+  index: number,
+): { lastIndex: number; keptQueryParts: QueryPart[] } {
   if (queryPart.name === name) {
     const isNotFoundAtNextIndex = index !== lastIndex + 1;
 
@@ -182,11 +235,11 @@ function pickQueryPartsByName(
   return { lastIndex, keptQueryParts };
 }
 
-function swaggerInQueryDefinitions(definition) {
+function swaggerInQueryDefinitions(definition: QSParameter): boolean {
   return !definition.in || 'query' === definition.in;
 }
 
-function getQueryStringParts(queryString) {
+function getQueryStringParts(queryString: string): QueryPart[] {
   return queryString
     .split('&')
     .map((queryStringChunk) => queryStringChunk.split('='))
@@ -197,17 +250,18 @@ function getQueryStringParts(queryString) {
 }
 
 function assignQueryStringPart(
-  options,
-  queryParamDefinition,
-  queryStringParams,
-  queryStringPart,
-) {
+  options: QSOptions,
+  queryParamDefinition: QSParameter,
+  queryStringParams: QSParameterValues,
+  queryStringPart: QueryPart,
+): QSParameterValues {
   // Supporting only a subset of JSON schema core
   // http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
-  const itemDefinition =
+  const itemDefinition = (
     'array' === queryParamDefinition.type
       ? queryParamDefinition.items
-      : queryParamDefinition;
+      : queryParamDefinition
+  ) as QSUniqueParameter;
   const value =
     'string' === itemDefinition.type
       ? decodeQueryComponent(queryStringPart.value)
@@ -237,7 +291,7 @@ function assignQueryStringPart(
 
   if (
     itemDefinition.pattern &&
-    !new RegExp(itemDefinition.pattern).test(value)
+    !new RegExp(itemDefinition.pattern).test(value.toString())
   ) {
     throw new YError(
       'E_PATTERN_DOES_NOT_MATCH',
@@ -247,32 +301,28 @@ function assignQueryStringPart(
   }
 
   if ('array' === queryParamDefinition.type) {
-    queryStringParams[queryStringPart.name] =
-      queryStringParams[queryStringPart.name] || [];
+    const values = (queryStringParams[queryStringPart.name] || []) as QSValue[];
     if (
       queryParamDefinition.ordered &&
-      queryStringParams[queryStringPart.name].length &&
-      queryStringParams[queryStringPart.name][
-        queryStringParams[queryStringPart.name].length - 1
-      ] > value
+      values.length &&
+      values[values.length - 1] > value
     ) {
       throw new YError(
         'E_UNORDERED_QUERY_PARAMS',
         value,
-        queryStringParams[queryStringPart.name][
-          queryStringParams[queryStringPart.name].length - 1
-        ],
+        values[values.length - 1],
       );
     }
-    queryStringParams[queryStringPart.name].push(value);
+    values.push(value);
+    queryStringParams[queryStringPart.name] = values;
   } else {
     queryStringParams[queryStringPart.name] = value;
   }
   return queryStringParams;
 }
 
-export function parseReentrantNumber(str) {
-  const value = parseFloat(str, BASE_10);
+export function parseReentrantNumber(str: string): number {
+  const value = parseFloat(str);
 
   if (value.toString(BASE_10) !== str) {
     throw new YError('E_NON_REENTRANT_NUMBER', str, value.toString(BASE_10));
@@ -281,7 +331,7 @@ export function parseReentrantNumber(str) {
   return value;
 }
 
-export function parseBoolean(str) {
+export function parseBoolean(str: string): boolean {
   if ('true' === str) {
     return true;
   } else if ('false' === str) {
@@ -290,6 +340,8 @@ export function parseBoolean(str) {
   throw new YError('E_BAD_BOOLEAN', str);
 }
 
-export function decodeQueryComponent(value) {
+export function decodeQueryComponent(value: string): string {
   return decodeURIComponent(value.replace(/\+/g, '%20'));
 }
+
+export { qsStrict };

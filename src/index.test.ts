@@ -1,12 +1,13 @@
 import assert from 'assert';
-import qs from '.';
+import { qsStrict } from './index.js';
+import type { QSParameter } from './index.js';
 
 describe('strict-qs', () => {
   describe('with no search', () => {
     const qsDefinition = [];
 
     test('should work', () => {
-      assert.deepEqual(qs(qsDefinition, ''), {});
+      assert.deepEqual(qsStrict({}, qsDefinition, ''), {});
     });
   });
 
@@ -15,17 +16,20 @@ describe('strict-qs', () => {
 
     test('should fail', () => {
       assert.throws(() => {
-        qs({}, qsDefinition, '?');
+        qsStrict({}, qsDefinition, '?');
       }, /E_EMPTY_SEARCH/);
     });
 
     test('should work when allowed', () => {
-      assert.deepEqual(qs({ allowEmptySearch: true }, qsDefinition, '?'), {});
+      assert.deepEqual(
+        qsStrict({ allowEmptySearch: true }, qsDefinition, '?'),
+        {},
+      );
     });
 
     test('should fail', () => {
       assert.throws(() => {
-        qs({}, qsDefinition, 'lol');
+        qsStrict({}, qsDefinition, 'lol');
       }, /E_MALFORMED_SEARCH/);
     });
   });
@@ -38,18 +42,18 @@ describe('strict-qs', () => {
         type: 'object',
         required: true,
         description: 'The user',
-      },
+      } as unknown as QSParameter,
     ];
 
     test('should fail', () => {
       assert.throws(() => {
-        qs({}, qsDefinition, '?user=lol');
+        qsStrict({}, qsDefinition, '?user=lol');
       }, /E_UNSUPPORTED_TYPE/);
     });
   });
 
   describe('with ordered collections', () => {
-    const qsDefinition = [
+    const qsDefinition: QSParameter[] = [
       {
         name: 'pages',
         in: 'query',
@@ -63,20 +67,20 @@ describe('strict-qs', () => {
     ];
 
     test('should work when params are ordered', () => {
-      assert.deepEqual(qs({}, qsDefinition, '?pages=0&pages=1&pages=2'), {
+      assert.deepEqual(qsStrict({}, qsDefinition, '?pages=0&pages=1&pages=2'), {
         pages: [0, 1, 2], // eslint-disable-line
       });
     });
 
     test('should fail when params are not ordered', () => {
       assert.throws(() => {
-        qs({}, qsDefinition, '?pages=0&pages=2&pages=1');
+        qsStrict({}, qsDefinition, '?pages=0&pages=2&pages=1');
       }, /E_UNORDERED_QUERY_PARAMS/);
     });
   });
 
   describe('with encoded components', () => {
-    const qsDefinition = [
+    const qsDefinition: QSParameter[] = [
       {
         name: 'redirectURL',
         in: 'query',
@@ -86,7 +90,7 @@ describe('strict-qs', () => {
 
     test('should work', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?redirectURL=' + encodeURIComponent('http://localhost/plop'),
@@ -99,7 +103,7 @@ describe('strict-qs', () => {
   });
 
   describe('with axios components', () => {
-    const qsDefinition = [
+    const qsDefinition: QSParameter[] = [
       {
         name: 'query',
         in: 'query',
@@ -108,14 +112,14 @@ describe('strict-qs', () => {
     ];
 
     test('should work', () => {
-      assert.deepEqual(qs({}, qsDefinition, '?query=a+b+c'), {
+      assert.deepEqual(qsStrict({}, qsDefinition, '?query=a+b+c'), {
         query: 'a b c',
       });
     });
   });
 
   describe('with lots of different definitions', () => {
-    const qsDefinition = [
+    const qsDefinition: QSParameter[] = [
       {
         name: 'lang',
         in: 'query',
@@ -162,7 +166,7 @@ describe('strict-qs', () => {
 
     test('should work with good params', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=true',
@@ -175,7 +179,7 @@ describe('strict-qs', () => {
         },
       );
       assert.throws(
-        qs.bind(
+        qsStrict.bind(
           null,
           {},
           qsDefinition,
@@ -184,7 +188,7 @@ describe('strict-qs', () => {
         /E_NOT_IN_ENUM/,
       );
       assert.throws(
-        qs.bind(
+        qsStrict.bind(
           null,
           {},
           qsDefinition,
@@ -196,7 +200,7 @@ describe('strict-qs', () => {
 
     test('should work with all params', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=false&nums=4',
@@ -213,7 +217,7 @@ describe('strict-qs', () => {
 
     test('should fail when required params are not in order', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&lang=hop&types=closed&types=pending&code=3&full=true',
@@ -223,7 +227,7 @@ describe('strict-qs', () => {
 
     test('should work when required params are not in order with option allowUnorderedParams', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           { allowUnorderedParams: true },
           qsDefinition,
           '?lang=fr&types=open&lang=fr&types=closed&types=pending&code=3&full=true',
@@ -239,7 +243,7 @@ describe('strict-qs', () => {
 
     test('should work when required params are not in order with option allowUnorderedParams and allowUnknownParams', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           { allowUnorderedParams: true, allowUnknownParams: true },
           qsDefinition,
           '?lang=fr&types=open&pippip=yeah&lang=fr&types=closed&types=pending&code=3&full=true',
@@ -255,7 +259,7 @@ describe('strict-qs', () => {
 
     test('should fail when required params are not provided', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?types=open&types=closed&types=pending&code=3&full=true',
@@ -265,7 +269,7 @@ describe('strict-qs', () => {
 
     test('should fail when a bad boolean is provided', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=1',
@@ -275,7 +279,7 @@ describe('strict-qs', () => {
 
     test('should fail when a bad array item is given', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=true&nums=1&nums=0.0',
@@ -285,7 +289,7 @@ describe('strict-qs', () => {
 
     test('should work whith an unexisting param and the allowUnknownParams option', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           { allowUnknownParams: true },
           qsDefinition,
           '?lol=9&lang=fr&types=open&types=closed&types=pending&code=3&full=true',
@@ -301,7 +305,7 @@ describe('strict-qs', () => {
 
     test('should fail when an unexisting param is set at the begin', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lol=9&lang=fr&types=open&types=closed&types=pending&code=3&full=true',
@@ -311,7 +315,7 @@ describe('strict-qs', () => {
 
     test('should fail when an unexisting param is set in the middle', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pendinglol=9&&code=3&full=true',
@@ -321,7 +325,7 @@ describe('strict-qs', () => {
 
     test('should fail when an unexisting param is set at the end', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=true&lol=9',
@@ -331,7 +335,7 @@ describe('strict-qs', () => {
 
     test('should fail when setting a query param to the default value', () => {
       assert.throws(() => {
-        qs(
+        qsStrict(
           {},
           qsDefinition,
           '?lang=en&types=open&types=closed&types=pending&code=3&full=true',
@@ -340,7 +344,7 @@ describe('strict-qs', () => {
     });
     test('should work when setting a query param to the default value and allowDefault option', () => {
       assert.deepEqual(
-        qs(
+        qsStrict(
           { allowDefault: true },
           qsDefinition,
           '?lang=en&types=open&types=closed&types=pending&code=3&full=true',
