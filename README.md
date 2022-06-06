@@ -8,7 +8,7 @@
 > A stricter Query String parser
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/strict-qs/blob/master/LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/git+ssh://git@github.com/nfroidure/strict-qs.git/badge.svg?branch=master)](https://coveralls.io/github/git+ssh://git@github.com/nfroidure/strict-qs.git?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/nfroidure/strict-qs/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/strict-qs?branch=master)
 
 
 [//]: # (::contents:start)
