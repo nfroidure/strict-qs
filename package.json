@@ -2,6 +2,7 @@
   "name": "strict-qs",
   "version": "7.0.0",
   "description": "A stricter Query String parser",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "metapak": {
@@ -37,7 +38,7 @@
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls && rm -rf ./coverage",
     "cz": "env NODE_ENV=${NODE_ENV:-cli} git cz",
     "doc": "echo \"# API\" > API.md; jsdoc2md dist/*.js >> API.md && git add API.md",
-    "jest": "NODE_ENV=test jest",
+    "jest": "NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest",
     "lint": "eslint src/*.ts",
     "metapak": "metapak",
     "precz": "npm t && npm run lint && npm run build && npm run doc && npm run metapak -- -s",
@@ -67,24 +68,24 @@
   },
   "homepage": "https://github.com/nfroidure/strict-qs#readme",
   "devDependencies": {
-    "@types/jest": "^28.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.27.0",
-    "@typescript-eslint/parser": "^5.27.0",
-    "commitizen": "^4.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.36.0",
+    "@typescript-eslint/parser": "^5.36.0",
+    "commitizen": "^4.2.5",
     "conventional-changelog-cli": "^2.2.2",
     "coveralls": "^3.1.1",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint": "^8.17.0",
+    "esbuild": "^0.15.6",
+    "esbuild-jest": "^0.5.0",
+    "eslint": "^8.23.0",
     "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^28.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.0.1",
     "jsdoc-to-markdown": "^7.1.1",
-    "metapak": "^4.0.3",
-    "metapak-nfroidure": "12.0.5",
-    "prettier": "^2.6.2",
+    "metapak": "^4.0.4",
+    "metapak-nfroidure": "12.3.0",
+    "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
-    "ts-jest": "^28.0.4",
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.2"
   },
   "dependencies": {
     "debug": "^4.3.4",
@@ -170,68 +171,21 @@
     "roots": [
       "<rootDir>/src"
     ],
-    "preset": "ts-jest",
-    "testEnvironment": "node",
     "transform": {
-      "\\.[jt]sx?$": "ts-jest"
+      "^.+\\.tsx?$": [
+        "esbuild-jest",
+        {
+          "sourcemap": true,
+          "format": "esm"
+        }
+      ]
     },
-    "globals": {
-      "ts-jest": {
-        "useESM": true
-      }
-    },
+    "testEnvironment": "node",
     "moduleNameMapper": {
       "(.+)\\.js": "$1"
     },
     "extensionsToTreatAsEsm": [
       ".ts"
     ]
-  },
-  "babel": {
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread"
-    ],
-    "presets": [
-      [
-        "@babel/env",
-        {
-          "targets": {
-            "node": "16.15.0"
-          }
-        }
-      ]
-    ],
-    "env": {
-      "cjs": {
-        "presets": [
-          [
-            "@babel/env",
-            {
-              "targets": {
-                "node": "10"
-              },
-              "modules": "commonjs"
-            }
-          ]
-        ],
-        "comments": true
-      },
-      "mjs": {
-        "presets": [
-          [
-            "@babel/env",
-            {
-              "targets": {
-                "node": "12"
-              },
-              "modules": false
-            }
-          ]
-        ],
-        "comments": false
-      }
-    },
-    "sourceMaps": true
-  },
-  "type": "module"
+  }
 }

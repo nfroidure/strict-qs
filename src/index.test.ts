@@ -1,3 +1,4 @@
+import { describe, test } from '@jest/globals';
 import assert from 'assert';
 import { qsStrict } from './index.js';
 import type { QSParameter } from './index.js';
