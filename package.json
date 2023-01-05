@@ -1,6 +1,6 @@
 {
   "name": "strict-qs",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "A stricter Query String parser",
   "type": "module",
   "main": "dist/index.js",
