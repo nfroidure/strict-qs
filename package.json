@@ -25,7 +25,7 @@
     }
   },
   "name": "strict-qs",
-  "version": "7.0.2",
+  "version": "8.0.0",
   "description": "A stricter Query String parser",
   "type": "module",
   "main": "dist/index.js",
