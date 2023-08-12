@@ -7,8 +7,8 @@
 # strict-qs
 > A stricter Query String parser
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/strict-qs/blob/master/LICENSE)
-[![Coverage Status](https://coveralls.io/repos/github/nfroidure/strict-qs/badge.svg?branch=master)](https://coveralls.io/github/nfroidure/strict-qs?branch=master)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/nfroidure/strict-qs/blob/main/LICENSE)
+[![Coverage Status](https://coveralls.io/repos/github/nfroidure/strict-qs/badge.svg?branch=main)](https://coveralls.io/github/nfroidure/strict-qs?branch=main)
 
 
 [//]: # (::contents:start)
@@ -139,4 +139,4 @@ qs(qsOptions, qsDefinition, '?pages=0&pages=1&pages=2');
 - [Nicolas Froidure](http://insertafter.com/en/index.html)
 
 # License
-[MIT](https://github.com/nfroidure/strict-qs/blob/master/LICENSE)
+[MIT](https://github.com/nfroidure/strict-qs/blob/main/LICENSE)
