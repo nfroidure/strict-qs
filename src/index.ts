@@ -266,16 +266,16 @@ function assignQueryStringPart(
     'string' === itemDefinition.type
       ? decodeQueryComponent(queryStringPart.value)
       : 'boolean' === itemDefinition.type
-      ? parseBoolean(decodeQueryComponent(queryStringPart.value))
-      : 'number' === itemDefinition.type
-      ? parseReentrantNumber(decodeQueryComponent(queryStringPart.value))
-      : (() => {
-          throw new YError(
-            'E_UNSUPPORTED_TYPE',
-            queryParamDefinition.name,
-            itemDefinition.type,
-          );
-        })();
+        ? parseBoolean(decodeQueryComponent(queryStringPart.value))
+        : 'number' === itemDefinition.type
+          ? parseReentrantNumber(decodeQueryComponent(queryStringPart.value))
+          : (() => {
+              throw new YError(
+                'E_UNSUPPORTED_TYPE',
+                queryParamDefinition.name,
+                itemDefinition.type,
+              );
+            })();
 
   if (itemDefinition.default === value && !options.allowDefault) {
     throw new YError(
