@@ -1,3 +1,7 @@
+## [8.0.3](https://github.com/nfroidure/strict-qs/compare/v8.0.2...v8.0.3) (2024-07-15)
+
+
+
 ## [8.0.2](https://github.com/nfroidure/strict-qs/compare/v8.0.1...v8.0.2) (2024-02-24)
 
 
