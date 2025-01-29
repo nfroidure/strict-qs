@@ -1,14 +1,13 @@
-import { describe, test } from '@jest/globals';
-import assert from 'assert';
-import { qsStrict } from './index.js';
-import type { QSParameter } from './index.js';
+import { describe, test, expect } from '@jest/globals';
+import { qsStrict, type QSParameter } from './index.js';
+import { YError } from 'yerror';
 
 describe('strict-qs', () => {
   describe('with no search', () => {
     const qsDefinition = [];
 
     test('should work', () => {
-      assert.deepEqual(qsStrict({}, qsDefinition, ''), {});
+      expect(qsStrict({}, qsDefinition, '')).toEqual({});
     });
   });
 
@@ -16,22 +15,31 @@ describe('strict-qs', () => {
     const qsDefinition = [];
 
     test('should fail', () => {
-      assert.throws(() => {
+      try {
         qsStrict({}, qsDefinition, '?');
-      }, /E_EMPTY_SEARCH/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_EMPTY_SEARCH (?): E_EMPTY_SEARCH]`,
+        );
+      }
     });
 
     test('should work when allowed', () => {
-      assert.deepEqual(
-        qsStrict({ allowEmptySearch: true }, qsDefinition, '?'),
+      expect(qsStrict({ allowEmptySearch: true }, qsDefinition, '?')).toEqual(
         {},
       );
     });
 
     test('should fail', () => {
-      assert.throws(() => {
+      try {
         qsStrict({}, qsDefinition, 'lol');
-      }, /E_MALFORMED_SEARCH/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_MALFORMED_SEARCH (lol): E_MALFORMED_SEARCH]`,
+        );
+      }
     });
   });
 
@@ -47,9 +55,14 @@ describe('strict-qs', () => {
     ];
 
     test('should fail', () => {
-      assert.throws(() => {
+      try {
         qsStrict({}, qsDefinition, '?user=lol');
-      }, /E_UNSUPPORTED_TYPE/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_UNSUPPORTED_TYPE (user, object): E_UNSUPPORTED_TYPE]`,
+        );
+      }
     });
   });
 
@@ -68,15 +81,20 @@ describe('strict-qs', () => {
     ];
 
     test('should work when params are ordered', () => {
-      assert.deepEqual(qsStrict({}, qsDefinition, '?pages=0&pages=1&pages=2'), {
-        pages: [0, 1, 2], // eslint-disable-line
+      expect(qsStrict({}, qsDefinition, '?pages=0&pages=1&pages=2')).toEqual({
+        pages: [0, 1, 2],
       });
     });
 
     test('should fail when params are not ordered', () => {
-      assert.throws(() => {
+      try {
         qsStrict({}, qsDefinition, '?pages=0&pages=2&pages=1');
-      }, /E_UNORDERED_QUERY_PARAMS/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_UNORDERED_QUERY_PARAMS (1, 2): E_UNORDERED_QUERY_PARAMS]`,
+        );
+      }
     });
   });
 
@@ -90,16 +108,15 @@ describe('strict-qs', () => {
     ];
 
     test('should work', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           {},
           qsDefinition,
           '?redirectURL=' + encodeURIComponent('http://localhost/plop'),
         ),
-        {
-          redirectURL: 'http://localhost/plop',
-        },
-      );
+      ).toEqual({
+        redirectURL: 'http://localhost/plop',
+      });
     });
   });
 
@@ -113,7 +130,7 @@ describe('strict-qs', () => {
     ];
 
     test('should work', () => {
-      assert.deepEqual(qsStrict({}, qsDefinition, '?query=a+b+c'), {
+      expect(qsStrict({}, qsDefinition, '?query=a+b+c')).toEqual({
         query: 'a b c',
       });
     });
@@ -159,204 +176,244 @@ describe('strict-qs', () => {
         type: 'array',
         items: {
           type: 'number',
-          enum: [1, 2, 3, 4], // eslint-disable-line
+          enum: [1, 2, 3, 4],
         },
         description: 'The types of the search',
       },
     ];
 
     test('should work with good params', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=true',
         ),
-        {
-          lang: 'fr',
-          types: ['open', 'closed', 'pending'],
-          code: 3,
-          full: true,
-        },
-      );
-      assert.throws(
-        qsStrict.bind(
-          null,
+      ).toEqual({
+        lang: 'fr',
+        types: ['open', 'closed', 'pending'],
+        code: 3,
+        full: true,
+      });
+      try {
+        qsStrict(
           {},
           qsDefinition,
           '?lang=cn&types=open&types=closed&types=pending&code=3&full=true',
-        ),
-        /E_NOT_IN_ENUM/,
-      );
-      assert.throws(
-        qsStrict.bind(
-          null,
+        );
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_NOT_IN_ENUM (lang, cn): E_NOT_IN_ENUM]`,
+        );
+      }
+      try {
+        qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3.4&full=true',
-        ),
-        /E_PATTERN_DOES_NOT_MATCH/,
-      );
+        );
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_PATTERN_DOES_NOT_MATCH (code, 3.4): E_PATTERN_DOES_NOT_MATCH]`,
+        );
+      }
     });
 
     test('should work with all params', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=false&nums=4',
         ),
-        {
-          lang: 'fr',
-          types: ['open', 'closed', 'pending'],
-          code: 3,
-          full: false,
-          nums: [4], // eslint-disable-line
-        },
-      );
+      ).toEqual({
+        lang: 'fr',
+        types: ['open', 'closed', 'pending'],
+        code: 3,
+        full: false,
+        nums: [4],
+      });
     });
 
     test('should fail when required params are not in order', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&lang=hop&types=closed&types=pending&code=3&full=true',
         );
-      }, /E_BAD_QUERY_PARAM_POSITION/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_BAD_QUERY_PARAM_POSITION (lang, 0, 2): E_BAD_QUERY_PARAM_POSITION]`,
+        );
+      }
     });
 
     test('should work when required params are not in order with option allowUnorderedParams', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           { allowUnorderedParams: true },
           qsDefinition,
           '?lang=fr&types=open&lang=fr&types=closed&types=pending&code=3&full=true',
         ),
-        {
-          lang: 'fr',
-          types: ['open', 'closed', 'pending'],
-          code: 3,
-          full: true,
-        },
-      );
+      ).toEqual({
+        lang: 'fr',
+        types: ['open', 'closed', 'pending'],
+        code: 3,
+        full: true,
+      });
     });
 
     test('should work when required params are not in order with option allowUnorderedParams and allowUnknownParams', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           { allowUnorderedParams: true, allowUnknownParams: true },
           qsDefinition,
           '?lang=fr&types=open&pippip=yeah&lang=fr&types=closed&types=pending&code=3&full=true',
         ),
-        {
-          lang: 'fr',
-          types: ['open', 'closed', 'pending'],
-          code: 3,
-          full: true,
-        },
-      );
+      ).toEqual({
+        lang: 'fr',
+        types: ['open', 'closed', 'pending'],
+        code: 3,
+        full: true,
+      });
     });
 
     test('should fail when required params are not provided', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?types=open&types=closed&types=pending&code=3&full=true',
         );
-      }, /E_REQUIRED_QUERY_PARAM/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_REQUIRED_QUERY_PARAM (lang): E_REQUIRED_QUERY_PARAM]`,
+        );
+      }
     });
 
     test('should fail when a bad boolean is provided', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=1',
         );
-      }, /E_BAD_BOOLEAN/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_BAD_BOOLEAN (1): E_BAD_BOOLEAN]`,
+        );
+      }
     });
 
     test('should fail when a bad array item is given', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=true&nums=1&nums=0.0',
         );
-      }, /E_NON_REENTRANT_NUMBER/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_NON_REENTRANT_NUMBER (0.0, 0): E_NON_REENTRANT_NUMBER]`,
+        );
+      }
     });
 
     test('should work whith an unexisting param and the allowUnknownParams option', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           { allowUnknownParams: true },
           qsDefinition,
           '?lol=9&lang=fr&types=open&types=closed&types=pending&code=3&full=true',
         ),
-        {
-          code: 3,
-          full: true,
-          lang: 'fr',
-          types: ['open', 'closed', 'pending'],
-        },
-      );
+      ).toEqual({
+        code: 3,
+        full: true,
+        lang: 'fr',
+        types: ['open', 'closed', 'pending'],
+      });
     });
 
     test('should fail when an unexisting param is set at the begin', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lol=9&lang=fr&types=open&types=closed&types=pending&code=3&full=true',
         );
-      }, /E_UNAUTHORIZED_QUERY_PARAM/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_UNAUTHORIZED_QUERY_PARAM (lol): E_UNAUTHORIZED_QUERY_PARAM]`,
+        );
+      }
     });
 
     test('should fail when an unexisting param is set in the middle', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pendinglol=9&&code=3&full=true',
         );
-      }, /E_UNAUTHORIZED_QUERY_PARAM/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_UNAUTHORIZED_QUERY_PARAM (): E_UNAUTHORIZED_QUERY_PARAM]`,
+        );
+      }
     });
 
     test('should fail when an unexisting param is set at the end', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lang=fr&types=open&types=closed&types=pending&code=3&full=true&lol=9',
         );
-      }, /E_UNAUTHORIZED_QUERY_PARAM/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_UNAUTHORIZED_QUERY_PARAM (lol): E_UNAUTHORIZED_QUERY_PARAM]`,
+        );
+      }
     });
 
     test('should fail when setting a query param to the default value', () => {
-      assert.throws(() => {
+      try {
         qsStrict(
           {},
           qsDefinition,
           '?lang=en&types=open&types=closed&types=pending&code=3&full=true',
         );
-      }, /E_CANNOT_SET_TO_DEFAULT/);
+        throw new YError('E_UNEXPECTED_SUCCESS');
+      } catch (err) {
+        expect(err).toMatchInlineSnapshot(
+          `[YError: E_CANNOT_SET_TO_DEFAULT (lang, en): E_CANNOT_SET_TO_DEFAULT]`,
+        );
+      }
     });
     test('should work when setting a query param to the default value and allowDefault option', () => {
-      assert.deepEqual(
+      expect(
         qsStrict(
           { allowDefault: true },
           qsDefinition,
           '?lang=en&types=open&types=closed&types=pending&code=3&full=true',
         ),
-        {
-          code: 3,
-          full: true,
-          lang: 'en',
-          types: ['open', 'closed', 'pending'],
-        },
-      );
+      ).toEqual({
+        code: 3,
+        full: true,
+        lang: 'en',
+        types: ['open', 'closed', 'pending'],
+      });
     });
   });
 });
