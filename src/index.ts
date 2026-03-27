@@ -6,35 +6,33 @@ export const BASE_10 = 10;
 
 const debug = initDebug('strict-qs');
 
-type QueryPart = {
+interface QueryPart {
   name: string;
   value: string;
-};
+}
 
-export type QSOptions = {
+export interface QSOptions {
   allowEmptySearch?: boolean;
   allowUnknownParams?: boolean;
   allowDefault?: boolean;
   allowUnorderedParams?: boolean;
-};
+}
 export type QSValue = string | number | boolean;
 export type QSParamValue = QSValue;
 export type QSParamType = 'string' | 'number' | 'boolean';
 
-export type QSUniqueParameter = {
+export interface QSUniqueParameter {
   name: string;
-  description?: string;
   in: 'query';
   pattern?: string;
   required?: boolean;
   enum?: QSParamValue[];
   type: QSParamType;
   default?: QSParamValue;
-};
+}
 
-export type QSArrayParameter = {
+export interface QSArrayParameter {
   name: string;
-  description?: string;
   in: 'query';
   type: 'array';
   required?: boolean;
@@ -45,13 +43,11 @@ export type QSArrayParameter = {
     enum?: QSParamValue[];
     type: QSParamType;
   };
-};
+}
 
 export type QSParameter = QSUniqueParameter | QSArrayParameter;
 
-export type QSParameterValues = {
-  [name: string]: QSValue | QSValue[];
-};
+export type QSParameterValues = Record<string, QSValue | QSValue[]>;
 
 /**
  * Parse a queryString according to the provided definitions
@@ -104,13 +100,13 @@ function qsStrict(
     return {};
   }
   if (!search.startsWith(SEARCH_FLAG)) {
-    throw new YError('E_MALFORMED_SEARCH', search);
+    throw new YError('E_MALFORMED_SEARCH', [search]);
   }
   if (search === SEARCH_FLAG) {
     if (options.allowEmptySearch) {
       return {};
     }
-    throw new YError('E_EMPTY_SEARCH', search);
+    throw new YError('E_EMPTY_SEARCH', [search]);
   }
 
   const usefulDefinitions = definitions.filter(swaggerInQueryDefinitions);
@@ -140,9 +136,9 @@ function qsStrict(
   const params = usefulDefinitions.reduce(
     pickupQueryParams.bind(null, options),
     {
-      queryStringParams: {},
+      queryStringParams: {} as QSParameterValues,
       queryStringPartsLeft: queryStringParts
-        .map((queryStringPart) => {
+        .map((queryStringPart: QueryPart) => {
           debug('Looking for "' + queryStringPart.name + '" definitions.');
           if (
             !usefulDefinitions.some((definition) => {
@@ -155,14 +151,13 @@ function qsStrict(
             if (options.allowUnknownParams) {
               return null;
             }
-            throw new YError(
-              'E_UNAUTHORIZED_QUERY_PARAM',
+            throw new YError('E_UNAUTHORIZED_QUERY_PARAM', [
               queryStringPart.name,
-            );
+            ]);
           }
           return queryStringPart;
         })
-        .filter((identity) => identity),
+        .filter((identity) => identity) as QueryPart[],
     },
   ).queryStringParams;
   debug('Params computed:', params);
@@ -171,9 +166,18 @@ function qsStrict(
 
 function pickupQueryParams(
   options: QSOptions,
-  { queryStringParams, queryStringPartsLeft },
-  queryParamDefinition,
-) {
+  {
+    queryStringParams,
+    queryStringPartsLeft,
+  }: {
+    queryStringParams: QSParameterValues;
+    queryStringPartsLeft: QueryPart[];
+  },
+  queryParamDefinition: QSParameter,
+): {
+  queryStringParams: QSParameterValues;
+  queryStringPartsLeft: QueryPart[];
+} {
   const involvedQueryStringParts = queryStringPartsLeft.reduce(
     pickQueryPartsByName.bind(null, queryParamDefinition.name),
     {
@@ -192,7 +196,7 @@ function pickupQueryParams(
   );
 
   if (0 === involvedQueryStringParts.length && queryParamDefinition.required) {
-    throw new YError('E_REQUIRED_QUERY_PARAM', queryParamDefinition.name);
+    throw new YError('E_REQUIRED_QUERY_PARAM', [queryParamDefinition.name]);
   }
 
   queryStringParams = involvedQueryStringParts.reduce(
@@ -227,7 +231,7 @@ function pickQueryPartsByName(
     const isNotFoundAtNextIndex = index !== lastIndex + 1;
 
     if (isNotFoundAtNextIndex) {
-      throw new YError('E_BAD_QUERY_PARAM_POSITION', name, lastIndex, index);
+      throw new YError('E_BAD_QUERY_PARAM_POSITION', [name, lastIndex, index]);
     }
     keptQueryParts = keptQueryParts.concat(queryPart);
     lastIndex = index;
@@ -270,34 +274,31 @@ function assignQueryStringPart(
         : 'number' === itemDefinition.type
           ? parseReentrantNumber(decodeQueryComponent(queryStringPart.value))
           : (() => {
-              throw new YError(
-                'E_UNSUPPORTED_TYPE',
+              throw new YError('E_UNSUPPORTED_TYPE', [
                 queryParamDefinition.name,
                 itemDefinition.type,
-              );
+              ]);
             })();
 
   if (itemDefinition.default === value && !options.allowDefault) {
-    throw new YError(
-      'E_CANNOT_SET_TO_DEFAULT',
+    throw new YError('E_CANNOT_SET_TO_DEFAULT', [
       queryParamDefinition.name,
       value,
-    );
+    ]);
   }
 
   if (itemDefinition.enum && !itemDefinition.enum.includes(value)) {
-    throw new YError('E_NOT_IN_ENUM', queryParamDefinition.name, value);
+    throw new YError('E_NOT_IN_ENUM', [queryParamDefinition.name, value]);
   }
 
   if (
     itemDefinition.pattern &&
     !new RegExp(itemDefinition.pattern).test(value.toString())
   ) {
-    throw new YError(
-      'E_PATTERN_DOES_NOT_MATCH',
+    throw new YError('E_PATTERN_DOES_NOT_MATCH', [
       queryParamDefinition.name,
       value,
-    );
+    ]);
   }
 
   if ('array' === queryParamDefinition.type) {
@@ -307,11 +308,10 @@ function assignQueryStringPart(
       values.length &&
       values[values.length - 1] > value
     ) {
-      throw new YError(
-        'E_UNORDERED_QUERY_PARAMS',
+      throw new YError('E_UNORDERED_QUERY_PARAMS', [
         value,
         values[values.length - 1],
-      );
+      ]);
     }
     values.push(value);
     queryStringParams[queryStringPart.name] = values;
@@ -325,7 +325,7 @@ export function parseReentrantNumber(str: string): number {
   const value = parseFloat(str);
 
   if (value.toString(BASE_10) !== str) {
-    throw new YError('E_NON_REENTRANT_NUMBER', str, value.toString(BASE_10));
+    throw new YError('E_NON_REENTRANT_NUMBER', [str, value.toString(BASE_10)]);
   }
 
   return value;
@@ -337,7 +337,7 @@ export function parseBoolean(str: string): boolean {
   } else if ('false' === str) {
     return false;
   }
-  throw new YError('E_BAD_BOOLEAN', str);
+  throw new YError('E_BAD_BOOLEAN', [str]);
 }
 
 export function decodeQueryComponent(value: string): string {

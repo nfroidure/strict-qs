@@ -4,7 +4,7 @@ import { YError } from 'yerror';
 
 describe('strict-qs', () => {
   describe('with no search', () => {
-    const qsDefinition = [];
+    const qsDefinition: QSParameter[] = [];
 
     test('should work', () => {
       expect(qsStrict({}, qsDefinition, '')).toEqual({});
@@ -12,7 +12,7 @@ describe('strict-qs', () => {
   });
 
   describe('with bad search', () => {
-    const qsDefinition = [];
+    const qsDefinition: QSParameter[] = [];
 
     test('should fail', () => {
       try {
@@ -20,7 +20,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_EMPTY_SEARCH (?): E_EMPTY_SEARCH]`,
+          `[YError: E_EMPTY_SEARCH (["?"]): E_EMPTY_SEARCH]`,
         );
       }
     });
@@ -37,7 +37,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_MALFORMED_SEARCH (lol): E_MALFORMED_SEARCH]`,
+          `[YError: E_MALFORMED_SEARCH (["lol"]): E_MALFORMED_SEARCH]`,
         );
       }
     });
@@ -60,7 +60,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_UNSUPPORTED_TYPE (user, object): E_UNSUPPORTED_TYPE]`,
+          `[YError: E_UNSUPPORTED_TYPE (["user","object"]): E_UNSUPPORTED_TYPE]`,
         );
       }
     });
@@ -76,7 +76,6 @@ describe('strict-qs', () => {
           type: 'number',
         },
         ordered: true,
-        description: 'The pages to print',
       },
     ];
 
@@ -92,7 +91,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_UNORDERED_QUERY_PARAMS (1, 2): E_UNORDERED_QUERY_PARAMS]`,
+          `[YError: E_UNORDERED_QUERY_PARAMS ([1,2]): E_UNORDERED_QUERY_PARAMS]`,
         );
       }
     });
@@ -145,7 +144,6 @@ describe('strict-qs', () => {
         required: true,
         default: 'en',
         enum: ['fr', 'en', 'de'],
-        description: 'The language for the search',
       },
       {
         name: 'types',
@@ -155,20 +153,17 @@ describe('strict-qs', () => {
           type: 'string',
           enum: ['open', 'closed', 'pending', 'idle', 'invalid'],
         },
-        description: 'The types of the search',
       },
       {
         name: 'code',
         in: 'query',
         type: 'number',
         pattern: '^[0-9]+$',
-        description: 'The code id',
       },
       {
         name: 'full',
         in: 'query',
         type: 'boolean',
-        description: 'Wether it is a full search or not',
       },
       {
         name: 'nums',
@@ -178,7 +173,6 @@ describe('strict-qs', () => {
           type: 'number',
           enum: [1, 2, 3, 4],
         },
-        description: 'The types of the search',
       },
     ];
 
@@ -204,7 +198,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_NOT_IN_ENUM (lang, cn): E_NOT_IN_ENUM]`,
+          `[YError: E_NOT_IN_ENUM (["lang","cn"]): E_NOT_IN_ENUM]`,
         );
       }
       try {
@@ -216,7 +210,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_PATTERN_DOES_NOT_MATCH (code, 3.4): E_PATTERN_DOES_NOT_MATCH]`,
+          `[YError: E_PATTERN_DOES_NOT_MATCH (["code",3.4]): E_PATTERN_DOES_NOT_MATCH]`,
         );
       }
     });
@@ -247,7 +241,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_BAD_QUERY_PARAM_POSITION (lang, 0, 2): E_BAD_QUERY_PARAM_POSITION]`,
+          `[YError: E_BAD_QUERY_PARAM_POSITION (["lang",0,2]): E_BAD_QUERY_PARAM_POSITION]`,
         );
       }
     });
@@ -292,7 +286,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_REQUIRED_QUERY_PARAM (lang): E_REQUIRED_QUERY_PARAM]`,
+          `[YError: E_REQUIRED_QUERY_PARAM (["lang"]): E_REQUIRED_QUERY_PARAM]`,
         );
       }
     });
@@ -307,7 +301,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_BAD_BOOLEAN (1): E_BAD_BOOLEAN]`,
+          `[YError: E_BAD_BOOLEAN (["1"]): E_BAD_BOOLEAN]`,
         );
       }
     });
@@ -322,7 +316,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_NON_REENTRANT_NUMBER (0.0, 0): E_NON_REENTRANT_NUMBER]`,
+          `[YError: E_NON_REENTRANT_NUMBER (["0.0","0"]): E_NON_REENTRANT_NUMBER]`,
         );
       }
     });
@@ -352,7 +346,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_UNAUTHORIZED_QUERY_PARAM (lol): E_UNAUTHORIZED_QUERY_PARAM]`,
+          `[YError: E_UNAUTHORIZED_QUERY_PARAM (["lol"]): E_UNAUTHORIZED_QUERY_PARAM]`,
         );
       }
     });
@@ -367,7 +361,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_UNAUTHORIZED_QUERY_PARAM (): E_UNAUTHORIZED_QUERY_PARAM]`,
+          `[YError: E_UNAUTHORIZED_QUERY_PARAM ([""]): E_UNAUTHORIZED_QUERY_PARAM]`,
         );
       }
     });
@@ -382,7 +376,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_UNAUTHORIZED_QUERY_PARAM (lol): E_UNAUTHORIZED_QUERY_PARAM]`,
+          `[YError: E_UNAUTHORIZED_QUERY_PARAM (["lol"]): E_UNAUTHORIZED_QUERY_PARAM]`,
         );
       }
     });
@@ -397,7 +391,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_CANNOT_SET_TO_DEFAULT (lang, en): E_CANNOT_SET_TO_DEFAULT]`,
+          `[YError: E_CANNOT_SET_TO_DEFAULT (["lang","en"]): E_CANNOT_SET_TO_DEFAULT]`,
         );
       }
     });
