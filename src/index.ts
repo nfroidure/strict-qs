@@ -1,5 +1,6 @@
 import initDebug from 'debug';
 import { YError } from 'yerror';
+import './errors.js';
 
 export const SEARCH_FLAG = '?';
 export const BASE_10 = 10;
@@ -298,6 +299,7 @@ function assignQueryStringPart(
     throw new YError('E_PATTERN_DOES_NOT_MATCH', [
       queryParamDefinition.name,
       value,
+      itemDefinition.pattern,
     ]);
   }
 

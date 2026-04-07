@@ -210,7 +210,7 @@ describe('strict-qs', () => {
         throw new YError('E_UNEXPECTED_SUCCESS');
       } catch (err) {
         expect(err).toMatchInlineSnapshot(
-          `[YError: E_PATTERN_DOES_NOT_MATCH (["code",3.4]): E_PATTERN_DOES_NOT_MATCH]`,
+          `[YError: E_PATTERN_DOES_NOT_MATCH (["code",3.4,"^[0-9]+$"]): E_PATTERN_DOES_NOT_MATCH]`,
         );
       }
     });
