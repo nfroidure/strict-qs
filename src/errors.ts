@@ -80,15 +80,15 @@ declare module 'yerror' {
 
     /**
      * Thrown when a number string cannot be parsed back to the same string (non-reentrant).
-     * @param str The original string.
-     * @param parsed The parsed and stringified version.
+     * @param originalString The original string.
+     * @param parsedValue The parsed and stringified version.
      */
-    E_NON_REENTRANT_NUMBER: [str: string, parsed: string];
+    E_NON_REENTRANT_NUMBER: [originalString: string, parsedValue: string];
 
     /**
      * Thrown when a boolean value is not 'true' or 'false'.
-     * @param str The invalid boolean string.
+     * @param invalidValue The invalid boolean string.
      */
-    E_BAD_BOOLEAN: [str: string];
+    E_BAD_BOOLEAN: [invalidValue: string];
   }
 }
