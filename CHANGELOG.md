@@ -1,3 +1,9 @@
+## [10.1.0](https://github.com/nfroidure/strict-qs/compare/v10.0.0...v10.1.0) (2026-11-19)
+
+### Bug Fixes
+
+* **parser:** fix empty values with no equal sign ([a995d37](https://github.com/nfroidure/strict-qs/commit/a995d3760453ce568c3ebebb65554348e41b648e)), closes [#20](https://github.com/nfroidure/strict-qs/issues/20)
+
 # [10.0.0](github.com/nfroidure/strict-qs/compare/v9.0.0...v10.0.0) (2026-04-07)
 
 # [9.0.0](github.com/nfroidure/strict-qs/compare/v8.0.3...v9.0.0) (2026-03-27)
