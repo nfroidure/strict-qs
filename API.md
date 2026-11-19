@@ -11,6 +11,7 @@ Parse a queryString according to the provided definitions
 | --- | --- | --- |
 | options | <code>Object</code> | Parser options |
 | options.allowEmptySearch | <code>Boolean</code> | Avoid throwing when the search is empty |
+| options.allowEmptyValue | <code>Boolean</code> | Avoid throwing when a value is empty |
 | options.allowUnknownParams | <code>Boolean</code> | Avoid throwing when some params are unknown |
 | options.allowDefault | <code>Boolean</code> | Avoid throwing when some params is set to its default value |
 | options.allowUnorderedParams | <code>Boolean</code> | Avoid throwing when params are not set in the same order  than declarations |

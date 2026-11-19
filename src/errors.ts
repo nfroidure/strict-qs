@@ -15,6 +15,12 @@ declare module 'yerror' {
     E_EMPTY_SEARCH: [search: string];
 
     /**
+     * Thrown when a value is not set at all (no equal sign after the parameter name).
+     * @param paramName The name of the parameter.
+     */
+    E_UNALLOWED_EMPTY_VALUE: [paramName: string];
+
+    /**
      * Thrown when an unknown query parameter is encountered and allowUnknownParams is false.
      * @param paramName The name of the unauthorized parameter.
      */

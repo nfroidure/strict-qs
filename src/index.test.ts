@@ -43,6 +43,112 @@ describe('strict-qs', () => {
     });
   });
 
+  describe('with no value', () => {
+    const qsDefinition: QSParameter[] = [
+      {
+        name: 'user',
+        in: 'query',
+        type: 'object',
+        required: false,
+        description: 'The user',
+      } as unknown as QSParameter,
+      {
+        name: 'id',
+        in: 'query',
+        type: 'string',
+        required: false,
+        description: 'The id',
+      } as unknown as QSParameter,
+      {
+        name: 'uuid',
+        in: 'query',
+        type: 'string',
+        required: false,
+        description: 'The uuid',
+        pattern: '^[0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]+$',
+      } as unknown as QSParameter,
+    ];
+
+    describe('should fail when strict', () => {
+      test('with object value', () => {
+        try {
+          qsStrict({}, qsDefinition, '?user');
+          throw new YError('E_UNEXPECTED_SUCCESS');
+        } catch (err) {
+          expect(err).toMatchInlineSnapshot(
+            `[YError: E_UNALLOWED_EMPTY_VALUE (["user"]): E_UNALLOWED_EMPTY_VALUE]`,
+          );
+        }
+      });
+
+      test('with literal value', () => {
+        try {
+          qsStrict({}, qsDefinition, '?id');
+          throw new YError('E_UNEXPECTED_SUCCESS');
+        } catch (err) {
+          expect(err).toMatchInlineSnapshot(
+            `[YError: E_UNALLOWED_EMPTY_VALUE (["id"]): E_UNALLOWED_EMPTY_VALUE]`,
+          );
+        }
+      });
+
+      test('with literal value with a pattern', () => {
+        try {
+          qsStrict({}, qsDefinition, '?uuid');
+          throw new YError('E_UNEXPECTED_SUCCESS');
+        } catch (err) {
+          expect(err).toMatchInlineSnapshot(
+            `[YError: E_UNALLOWED_EMPTY_VALUE (["uuid"]): E_UNALLOWED_EMPTY_VALUE]`,
+          );
+        }
+      });
+    });
+
+    describe('should fail when allowed', () => {
+      test('with literal value and required', () => {
+        try {
+          qsStrict(
+            { allowEmptyValue: true },
+            [
+              {
+                name: 'lang',
+                in: 'query',
+                type: 'string',
+                required: true,
+              },
+            ],
+            '?lang',
+          );
+          throw new YError('E_UNEXPECTED_SUCCESS');
+        } catch (err) {
+          expect(err).toMatchInlineSnapshot(
+            `[YError: E_REQUIRED_QUERY_PARAM (["lang"]): E_REQUIRED_QUERY_PARAM]`,
+          );
+        }
+      });
+    });
+
+    describe('should work when allowed', () => {
+      test('with object value', () => {
+        expect(
+          qsStrict({ allowEmptyValue: true }, qsDefinition, '?user'),
+        ).toEqual({});
+      });
+
+      test('with literal value', () => {
+        expect(
+          qsStrict({ allowEmptyValue: true }, qsDefinition, '?id'),
+        ).toEqual({});
+      });
+
+      test('with literal value with a pattern', () => {
+        expect(
+          qsStrict({ allowEmptyValue: true }, qsDefinition, '?uuid'),
+        ).toEqual({});
+      });
+    });
+  });
+
   describe('with unsupported definition type', () => {
     const qsDefinition = [
       {

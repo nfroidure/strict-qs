@@ -14,6 +14,7 @@ interface QueryPart {
 
 export interface QSOptions {
   allowEmptySearch?: boolean;
+  allowEmptyValue?: boolean;
   allowUnknownParams?: boolean;
   allowDefault?: boolean;
   allowUnorderedParams?: boolean;
@@ -56,6 +57,8 @@ export type QSParameterValues = Record<string, QSValue | QSValue[]>;
  * Parser options
  * @param  {Boolean}  options.allowEmptySearch
  * Avoid throwing when the search is empty
+ * @param  {Boolean}  options.allowEmptyValue
+ * Avoid throwing when a value is empty
  * @param  {Boolean}  options.allowUnknownParams
  * Avoid throwing when some params are unknown
  * @param  {Boolean}  options.allowDefault
@@ -196,7 +199,13 @@ function pickupQueryParams(
     involvedQueryStringParts,
   );
 
-  if (0 === involvedQueryStringParts.length && queryParamDefinition.required) {
+  if (
+    (0 === involvedQueryStringParts.length ||
+      involvedQueryStringParts.every(
+        (queryPart) => typeof queryPart.value === 'undefined',
+      )) &&
+    queryParamDefinition.required
+  ) {
     throw new YError('E_REQUIRED_QUERY_PARAM', [queryParamDefinition.name]);
   }
 
@@ -268,20 +277,33 @@ function assignQueryStringPart(
       : queryParamDefinition
   ) as QSUniqueParameter;
   const value =
-    'string' === itemDefinition.type
-      ? decodeQueryComponent(queryStringPart.value)
-      : 'boolean' === itemDefinition.type
-        ? parseBoolean(decodeQueryComponent(queryStringPart.value))
-        : 'number' === itemDefinition.type
-          ? parseReentrantNumber(decodeQueryComponent(queryStringPart.value))
-          : (() => {
-              throw new YError('E_UNSUPPORTED_TYPE', [
-                queryParamDefinition.name,
-                itemDefinition.type,
-              ]);
-            })();
+    typeof queryStringPart.value === 'undefined'
+      ? queryStringPart.value
+      : 'string' === itemDefinition.type
+        ? decodeQueryComponent(queryStringPart.value)
+        : 'boolean' === itemDefinition.type
+          ? parseBoolean(decodeQueryComponent(queryStringPart.value))
+          : 'number' === itemDefinition.type
+            ? parseReentrantNumber(decodeQueryComponent(queryStringPart.value))
+            : (() => {
+                throw new YError('E_UNSUPPORTED_TYPE', [
+                  queryParamDefinition.name,
+                  itemDefinition.type,
+                ]);
+              })();
 
-  if (itemDefinition.default === value && !options.allowDefault) {
+  if (typeof value === 'undefined') {
+    if (options.allowEmptyValue) {
+      return queryStringParams;
+    }
+    throw new YError('E_UNALLOWED_EMPTY_VALUE', [queryParamDefinition.name]);
+  }
+
+  if (
+    'default' in itemDefinition &&
+    itemDefinition.default === value &&
+    !options.allowDefault
+  ) {
     throw new YError('E_CANNOT_SET_TO_DEFAULT', [
       queryParamDefinition.name,
       value,
@@ -305,6 +327,7 @@ function assignQueryStringPart(
 
   if ('array' === queryParamDefinition.type) {
     const values = (queryStringParams[queryStringPart.name] || []) as QSValue[];
+
     if (
       queryParamDefinition.ordered &&
       values.length &&
